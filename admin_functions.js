@@ -87,9 +87,20 @@ async function deleteFasciaEta(id) {
 }
 
 async function updateGame(gameId, updates) {
+    const mappedUpdates = {};
+
+    if (updates.nome !== undefined) mappedUpdates.name = updates.nome;
+    if (updates.luogo !== undefined) mappedUpdates.location = updates.luogo;
+    if (updates.data !== undefined) mappedUpdates.date = updates.data;
+    if (updates.ora_inizio !== undefined) mappedUpdates.time_start = updates.ora_inizio;
+    if (updates.ora_fine !== undefined) mappedUpdates.time_end = updates.ora_fine;
+    if (updates.live_stream_url !== undefined) mappedUpdates.live_stream_url = updates.live_stream_url;
+    if (updates.bracket_image_url !== undefined) mappedUpdates.bracket_image_url = updates.bracket_image_url;
+    if (updates.mandatory_women !== undefined) mappedUpdates.mandatory_women = updates.mandatory_women;
+
     const { data, error } = await supabaseClient
         .from('giochi')
-        .update(updates)
+        .update(mappedUpdates)
         .eq('id', gameId);
 
     if (error) {

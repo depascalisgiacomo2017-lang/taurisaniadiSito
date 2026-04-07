@@ -1,329 +1,362 @@
-function loadCredentialsManagement() {
-    const section = document.getElementById('credentials-section');
-    if (!section) return;
-
-    section.innerHTML = `
-        <h3>Gestione Credenziali</h3>
-
-        <div class="credentials-block">
-            <h4>Credenziali Amministratore</h4>
-            <input type="text" id="admin-username" placeholder="Nuovo Username">
-            <input type="password" id="admin-password" placeholder="Nuova Password">
-            <button onclick="saveAdminCredentials()">Salva Credenziali Admin</button>
-        </div>
-
-        <div class="credentials-block">
-            <h4>Credenziali Rioni</h4>
-            <div id="rioni-credentials-list"></div>
-        </div>
-    `;
-
-    loadRioniCredentials();
+function showMessage(text, isError = false) {
+    const msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = isError ? 'message error' : 'message success';
+    setTimeout(() => {
+        msg.className = 'message';
+    }, 3000);
 }
 
-function loadRioniCredentials() {
-    const list = document.getElementById('rioni-credentials-list');
-    if (!list) return;
-
-    list.innerHTML = window.appState.rioni.map(rione => `
-        <div class="rione-credentials-item">
-            <strong>${rione.nome}</strong>
-            <input type="text" id="rione-user-${rione.id}" value="${rione.username}" placeholder="Username">
-            <input type="password" id="rione-pass-${rione.id}" placeholder="Nuova Password">
-            <button onclick="saveRioneCredentials('${rione.id}')">Salva</button>
-        </div>
-    `).join('');
-}
-
-async function saveAdminCredentials() {
-    const username = document.getElementById('admin-username').value;
-    const password = document.getElementById('admin-password').value;
+async function changeAdminCredentials() {
+    const username = document.getElementById('admin-new-username').value;
+    const password = document.getElementById('admin-new-password').value;
 
     if (!username || !password) {
-        alert('Inserisci username e password');
+        showMessage('Inserisci username e password', true);
         return;
     }
 
     const result = await updateAdminCredentials(username, password);
-
     if (result.success) {
-        alert('Credenziali amministratore aggiornate con successo');
-        document.getElementById('admin-username').value = '';
-        document.getElementById('admin-password').value = '';
+        showMessage('Credenziali amministratore aggiornate con successo');
+        document.getElementById('admin-new-username').value = '';
+        document.getElementById('admin-new-password').value = '';
     } else {
-        alert('Errore durante aggiornamento credenziali');
+        showMessage('Errore aggiornamento credenziali', true);
     }
 }
 
-async function saveRioneCredentials(rioneId) {
+function loadRioniCredentials() {
+    const container = document.getElementById('rioni-credentials-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    window.appState.rioni.forEach(rione => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.style.flexDirection = 'column';
+        item.style.alignItems = 'flex-start';
+        item.innerHTML = `
+            <h3>${rione.nome}</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 15px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Username</label>
+                    <input type="text" id="rione-user-${rione.id}" value="${rione.username}"
+                        style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Password</label>
+                    <input type="text" id="rione-pass-${rione.id}" value="${rione.password}"
+                        style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                </div>
+            </div>
+            <button class="btn" style="margin-top: 10px;" onclick="updateRioneCredentialsUI('${rione.id}')">
+                Aggiorna Credenziali
+            </button>
+        `;
+        container.appendChild(item);
+    });
+}
+
+async function updateRioneCredentialsUI(rioneId) {
     const username = document.getElementById(`rione-user-${rioneId}`).value;
     const password = document.getElementById(`rione-pass-${rioneId}`).value;
 
-    if (!username) {
-        alert('Inserisci username');
+    if (!username || !password) {
+        showMessage('Inserisci username e password', true);
         return;
     }
 
-    const result = await updateRioneCredentials(rioneId, username, password || null);
-
+    const result = await updateRioneCredentials(rioneId, username, password);
     if (result.success) {
-        alert('Credenziali rione aggiornate con successo');
+        showMessage('Credenziali rione aggiornate con successo');
         await loadData();
-        loadRioniCredentials();
     } else {
-        alert('Errore durante aggiornamento credenziali');
+        showMessage('Errore aggiornamento credenziali', true);
     }
 }
 
-function loadChatSection() {
-    const section = document.getElementById('chat-section');
-    if (!section) return;
+async function sendChatMessage() {
+    const text = document.getElementById('chat-text').value;
+    const fileUrl = document.getElementById('chat-file-url').value || null;
+    const fileName = document.getElementById('chat-file-name').value || null;
 
-    section.innerHTML = `
-        <h3>Chat con Capi-Rione</h3>
+    if (!text) {
+        showMessage('Inserisci un messaggio', true);
+        return;
+    }
 
-        <div class="chat-container">
-            <div class="chat-messages" id="chat-messages"></div>
-
-            <div class="chat-input-area">
-                <textarea id="chat-message" placeholder="Scrivi un messaggio..." rows="3"></textarea>
-                <input type="text" id="file-url" placeholder="URL File (opzionale)">
-                <input type="text" id="file-name" placeholder="Nome File (opzionale)">
-                <button onclick="sendChatMessage()">Invia Messaggio</button>
-            </div>
-        </div>
-    `;
-
-    loadChatMessages();
+    const result = await sendMessageToRione(text, fileUrl, fileName);
+    if (result.success) {
+        showMessage('Messaggio inviato con successo');
+        document.getElementById('chat-text').value = '';
+        document.getElementById('chat-file-url').value = '';
+        document.getElementById('chat-file-name').value = '';
+        await loadData();
+        loadChatMessages();
+    } else {
+        showMessage('Errore invio messaggio', true);
+    }
 }
 
 function loadChatMessages() {
     const container = document.getElementById('chat-messages');
     if (!container) return;
 
-    container.innerHTML = window.appState.messaggi.map(msg => {
-        const time = new Date(msg.created_at).toLocaleString('it-IT');
-        return `
-            <div class="message ${msg.sender_type}">
-                <div class="message-header">
-                    <strong>${msg.sender_name}</strong>
-                    <span class="message-time">${time}</span>
-                </div>
-                ${msg.text ? `<div class="message-text">${msg.text}</div>` : ''}
-                ${msg.file_url ? `<div class="message-file"><a href="${msg.file_url}" target="_blank">${msg.file_name || 'File'}</a></div>` : ''}
-            </div>
+    container.innerHTML = '';
+
+    const messages = window.appState.messaggi || [];
+
+    if (messages.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999;">Nessun messaggio</p>';
+        return;
+    }
+
+    messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.style.cssText = `
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: ${msg.sender_type === 'admin' ? '#e3f2fd' : '#fff3e0'};
+            border-left: 4px solid ${msg.sender_type === 'admin' ? '#2196f3' : '#ff9800'};
         `;
-    }).join('');
+
+        const date = new Date(msg.created_at);
+        msgDiv.innerHTML = `
+            <div style="font-weight: bold; color: #2c1810; margin-bottom: 5px;">
+                ${msg.sender_name} - ${date.toLocaleString('it-IT')}
+            </div>
+            <div style="color: #5d4037;">${msg.text}</div>
+            ${msg.file_url ? `<div style="margin-top: 8px;">
+                <a href="${msg.file_url}" target="_blank" style="color: #1976d2; text-decoration: none;">
+                    📎 ${msg.file_name || 'File allegato'}
+                </a>
+            </div>` : ''}
+        `;
+        container.appendChild(msgDiv);
+    });
 
     container.scrollTop = container.scrollHeight;
 }
 
-async function sendChatMessage() {
-    const text = document.getElementById('chat-message').value;
-    const fileUrl = document.getElementById('file-url').value;
-    const fileName = document.getElementById('file-name').value;
-
-    if (!text && !fileUrl) {
-        alert('Inserisci un messaggio o un file');
-        return;
-    }
-
-    const result = await sendMessageToRione(text, fileUrl || null, fileName || null);
-
-    if (result.success) {
-        document.getElementById('chat-message').value = '';
-        document.getElementById('file-url').value = '';
-        document.getElementById('file-name').value = '';
-        await loadData();
-        loadChatMessages();
-    } else {
-        alert('Errore durante invio messaggio');
-    }
-}
-
-function loadAgeGroupsManagement() {
-    const section = document.getElementById('age-groups-section');
-    if (!section) return;
-
-    section.innerHTML = `
-        <h3>Gestione Fasce di Età</h3>
-
-        <div class="age-groups-block">
-            <h4>Aggiungi Nuova Fascia</h4>
-            <input type="text" id="fascia-nome" placeholder="Nome Fascia (es. Under 18)">
-            <input type="number" id="fascia-min" placeholder="Età Minima">
-            <input type="number" id="fascia-max" placeholder="Età Massima (lascia vuoto per illimitato)">
-            <button onclick="addNewAgeGroup()">Aggiungi Fascia</button>
-        </div>
-
-        <div class="age-groups-list">
-            <h4>Fasce Esistenti</h4>
-            <div id="age-groups-items"></div>
-        </div>
-    `;
-
-    loadAgeGroupsList();
-}
-
-function loadAgeGroupsList() {
-    const container = document.getElementById('age-groups-items');
-    if (!container) return;
-
-    container.innerHTML = window.appState.fasce_eta.map(fascia => `
-        <div class="age-group-item">
-            <span>${fascia.nome} (${fascia.min_eta}${fascia.max_eta ? `-${fascia.max_eta}` : '+'})</span>
-            <button onclick="removeAgeGroup('${fascia.id}')">Elimina</button>
-        </div>
-    `).join('');
-}
-
-async function addNewAgeGroup() {
+async function addNewFasciaEta() {
     const nome = document.getElementById('fascia-nome').value;
-    const min = parseInt(document.getElementById('fascia-min').value);
-    const max = document.getElementById('fascia-max').value ? parseInt(document.getElementById('fascia-max').value) : null;
+    const minEta = parseInt(document.getElementById('fascia-min').value);
+    const maxEta = parseInt(document.getElementById('fascia-max').value);
 
-    if (!nome || isNaN(min)) {
-        alert('Inserisci nome e età minima');
+    if (!nome || isNaN(minEta) || isNaN(maxEta)) {
+        showMessage('Compila tutti i campi', true);
         return;
     }
 
-    const result = await addFasciaEta(nome, min, max);
+    if (minEta >= maxEta) {
+        showMessage('Età minima deve essere minore di età massima', true);
+        return;
+    }
 
+    const result = await addFasciaEta(nome, minEta, maxEta);
     if (result.success) {
-        alert('Fascia di età aggiunta con successo');
+        showMessage('Fascia età aggiunta con successo');
         document.getElementById('fascia-nome').value = '';
         document.getElementById('fascia-min').value = '';
         document.getElementById('fascia-max').value = '';
         await loadData();
-        loadAgeGroupsList();
+        loadFasceList();
     } else {
-        alert('Errore durante aggiunta fascia');
+        showMessage('Errore aggiunta fascia età', true);
     }
 }
 
-async function removeAgeGroup(id) {
-    if (!confirm('Sei sicuro di voler eliminare questa fascia?')) return;
+function loadFasceList() {
+    const container = document.getElementById('fasce-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const fasce = window.appState.fasce_eta || [];
+
+    fasce.forEach(fascia => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <div>
+                <h3>${fascia.nome}</h3>
+                <p style="color: #5d4037; margin-top: 5px;">Età: ${fascia.min_eta} - ${fascia.max_eta}</p>
+            </div>
+            <button class="btn btn-danger" onclick="deleteFasciaEtaUI('${fascia.id}')">
+                Elimina
+            </button>
+        `;
+        container.appendChild(item);
+    });
+}
+
+async function deleteFasciaEtaUI(id) {
+    if (!confirm('Sei sicuro di voler eliminare questa fascia di età?')) return;
 
     const result = await deleteFasciaEta(id);
-
     if (result.success) {
-        alert('Fascia eliminata con successo');
+        showMessage('Fascia età eliminata con successo');
         await loadData();
-        loadAgeGroupsList();
+        loadFasceList();
     } else {
-        alert('Errore durante eliminazione fascia');
+        showMessage('Errore eliminazione fascia età', true);
     }
 }
 
 function loadAthleteStats() {
-    const section = document.getElementById('athlete-stats-section');
-    if (!section) return;
-
     const stats = getAthleteStats();
+    const container = document.getElementById('stats-container');
+    if (!container) return;
 
-    section.innerHTML = `
-        <h3>Statistiche Atleti per Rione</h3>
-        <div class="athlete-stats">
-            ${Object.keys(stats).map(rioneNome => `
-                <div class="rione-stats-block">
-                    <h4>${rioneNome}</h4>
-                    <table class="athlete-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Età</th>
-                                <th>Sesso</th>
-                                <th>Partecipazioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${stats[rioneNome].map(atleta => `
-                                <tr>
-                                    <td>${atleta.nome}</td>
-                                    <td>${atleta.eta}</td>
-                                    <td>${atleta.sesso}</td>
-                                    <td><strong>${atleta.partecipazioni}</strong></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `).join('')}
-        </div>
-    `;
+    container.innerHTML = '';
+
+    Object.keys(stats).forEach(rioneName => {
+        const rioneDiv = document.createElement('div');
+        rioneDiv.style.cssText = `
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #8b6538;
+        `;
+
+        let html = `<h3 style="margin-bottom: 15px; color: #2c1810;">${rioneName}</h3>`;
+
+        if (stats[rioneName].length === 0) {
+            html += '<p style="color: #999;">Nessun atleta</p>';
+        } else {
+            html += `<table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #8b6538; color: #f4e8d0;">
+                        <th style="padding: 10px; text-align: left;">Nome</th>
+                        <th style="padding: 10px; text-align: center;">Età</th>
+                        <th style="padding: 10px; text-align: center;">Sesso</th>
+                        <th style="padding: 10px; text-align: center;">Partecipazioni</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            stats[rioneName].forEach((atleta, idx) => {
+                html += `
+                    <tr style="background: ${idx % 2 === 0 ? '#f5f5f5' : 'white'}; border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">${atleta.nome}</td>
+                        <td style="padding: 10px; text-align: center;">${atleta.eta}</td>
+                        <td style="padding: 10px; text-align: center;">${atleta.sesso}</td>
+                        <td style="padding: 10px; text-align: center; font-weight: bold;">
+                            ${atleta.partecipazioni}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+        }
+
+        rioneDiv.innerHTML = html;
+        container.appendChild(rioneDiv);
+    });
 }
 
-function loadGamesManagement() {
-    const section = document.getElementById('games-management-section');
-    if (!section) return;
+function loadGiochiList() {
+    const container = document.getElementById('giochi-list');
+    if (!container) return;
 
-    section.innerHTML = `
-        <h3>Gestione Giochi</h3>
-        <div class="games-list">
-            ${window.appState.giochi.map(gioco => `
-                <div class="game-management-item">
-                    <h4>${gioco.name}</h4>
-                    <div class="game-management-fields">
-                        <label>Data: <input type="date" id="game-date-${gioco.id}" value="${gioco.date || ''}"></label>
-                        <label>Ora Inizio: <input type="time" id="game-time-start-${gioco.id}" value="${gioco.time_start || ''}"></label>
-                        <label>Ora Fine: <input type="time" id="game-time-end-${gioco.id}" value="${gioco.time_end || ''}"></label>
-                        <label>Luogo: <input type="text" id="game-location-${gioco.id}" value="${gioco.location || ''}" placeholder="Luogo"></label>
-                        <label>URL Live Stream: <input type="text" id="game-live-${gioco.id}" value="${gioco.live_stream_url || ''}" placeholder="URL Diretta"></label>
-                        <label>URL Tabellone: <input type="text" id="game-bracket-${gioco.id}" value="${gioco.bracket_image_url || ''}" placeholder="URL Immagine Tabellone"></label>
-                        <button onclick="updateGameDetails('${gioco.id}')">Aggiorna Gioco</button>
-                        <button class="delete-btn" onclick="deleteGameConfirm('${gioco.id}')">Elimina Gioco</button>
-                    </div>
+    container.innerHTML = '';
+
+    const giochi = window.appState.giochi || [];
+
+    giochi.forEach(gioco => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.style.cursor = 'pointer';
+        item.style.flexDirection = 'column';
+        item.style.alignItems = 'flex-start';
+
+        const date = gioco.date ? new Date(gioco.date).toLocaleDateString('it-IT') : 'N/A';
+
+        item.innerHTML = `
+            <div style="width: 100%;">
+                <h3>${gioco.name}</h3>
+                <p style="color: #5d4037; margin-top: 5px;">
+                    📅 ${date} | ⏰ ${gioco.time_start || 'N/A'} - ${gioco.time_end || 'N/A'}<br>
+                    📍 ${gioco.location || 'N/A'} | 👩 Min. donne: ${gioco.mandatory_women || 0}
+                    ${gioco.live_stream_url ? '<br>📹 Live attivo' : ''}
+                    ${gioco.bracket_image_url ? '<br>🏆 Tabellone presente' : ''}
+                </p>
+                <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="editGame('${gioco.id}')">Modifica</button>
+                    <button class="btn btn-danger" onclick="deleteGameUI('${gioco.id}')">Elimina</button>
                 </div>
-            `).join('')}
-        </div>
-    `;
+            </div>
+        `;
+        container.appendChild(item);
+    });
 }
 
-async function updateGameDetails(gameId) {
+function editGame(gameId) {
+    const gioco = window.appState.giochi.find(g => g.id === gameId);
+    if (!gioco) return;
+
+    const nome = prompt('Nome gioco:', gioco.name);
+    if (nome === null) return;
+
+    const luogo = prompt('Luogo:', gioco.location || '');
+    const data = prompt('Data (YYYY-MM-DD):', gioco.date || '');
+    const oraInizio = prompt('Ora inizio (HH:MM):', gioco.time_start || '');
+    const oraFine = prompt('Ora fine (HH:MM):', gioco.time_end || '');
+    const liveUrl = prompt('URL Live Stream:', gioco.live_stream_url || '');
+    const bracketUrl = prompt('URL Tabellone:', gioco.bracket_image_url || '');
+    const minDonne = prompt('Numero minimo donne:', gioco.mandatory_women || 0);
+
     const updates = {
-        date: document.getElementById(`game-date-${gameId}`).value || null,
-        time_start: document.getElementById(`game-time-start-${gameId}`).value || null,
-        time_end: document.getElementById(`game-time-end-${gameId}`).value || null,
-        location: document.getElementById(`game-location-${gameId}`).value || null,
-        live_stream_url: document.getElementById(`game-live-${gameId}`).value || null,
-        bracket_image_url: document.getElementById(`game-bracket-${gameId}`).value || null
+        nome: nome || gioco.name,
+        luogo: luogo || gioco.location,
+        data: data || gioco.date,
+        ora_inizio: oraInizio || gioco.time_start,
+        ora_fine: oraFine || gioco.time_end,
+        live_stream_url: liveUrl || null,
+        bracket_image_url: bracketUrl || null,
+        mandatory_women: parseInt(minDonne) || 0
     };
 
-    const result = await updateGame(gameId, updates);
-
-    if (result.success) {
-        alert('Gioco aggiornato con successo');
-        await loadData();
-    } else {
-        alert('Errore durante aggiornamento gioco');
-    }
+    updateGame(gameId, updates).then(result => {
+        if (result.success) {
+            showMessage('Gioco aggiornato con successo');
+            loadData().then(() => loadGiochiList());
+        } else {
+            showMessage('Errore aggiornamento gioco', true);
+        }
+    });
 }
 
-async function deleteGameConfirm(gameId) {
-    if (!confirm('Sei sicuro di voler eliminare questo gioco? Questa azione è irreversibile.')) return;
+async function deleteGameUI(gameId) {
+    if (!confirm('Sei sicuro di voler eliminare questo gioco? Verranno eliminate anche tutte le squadre associate.')) {
+        return;
+    }
 
     const result = await deleteGame(gameId);
-
     if (result.success) {
-        alert('Gioco eliminato con successo');
+        showMessage('Gioco eliminato con successo');
         await loadData();
-        loadGamesManagement();
+        loadGiochiList();
     } else {
-        alert('Errore durante eliminazione gioco');
+        showMessage('Errore eliminazione gioco', true);
     }
 }
 
-window.loadCredentialsManagement = loadCredentialsManagement;
-window.saveAdminCredentials = saveAdminCredentials;
-window.saveRioneCredentials = saveRioneCredentials;
-window.loadChatSection = loadChatSection;
-window.loadChatMessages = loadChatMessages;
+window.showMessage = showMessage;
+window.changeAdminCredentials = changeAdminCredentials;
+window.loadRioniCredentials = loadRioniCredentials;
+window.updateRioneCredentialsUI = updateRioneCredentialsUI;
 window.sendChatMessage = sendChatMessage;
-window.loadAgeGroupsManagement = loadAgeGroupsManagement;
-window.loadAgeGroupsList = loadAgeGroupsList;
-window.addNewAgeGroup = addNewAgeGroup;
-window.removeAgeGroup = removeAgeGroup;
+window.loadChatMessages = loadChatMessages;
+window.addNewFasciaEta = addNewFasciaEta;
+window.loadFasceList = loadFasceList;
+window.deleteFasciaEtaUI = deleteFasciaEtaUI;
 window.loadAthleteStats = loadAthleteStats;
-window.loadGamesManagement = loadGamesManagement;
-window.updateGameDetails = updateGameDetails;
-window.deleteGameConfirm = deleteGameConfirm;
+window.loadGiochiList = loadGiochiList;
+window.editGame = editGame;
+window.deleteGameUI = deleteGameUI;

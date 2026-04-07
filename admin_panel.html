@@ -256,6 +256,10 @@
         <button class="tab active" onclick="showSection('rioni')">🏛️ Rioni</button>
         <button class="tab" onclick="showSection('giochi')">⚔️ Giochi</button>
         <button class="tab" onclick="showSection('highlights')">🏆 Momenti Salienti</button>
+        <button class="tab" onclick="showSection('credenziali')">🔐 Credenziali</button>
+        <button class="tab" onclick="showSection('chat')">💬 Chat</button>
+        <button class="tab" onclick="showSection('fasce-eta')">👥 Fasce Età</button>
+        <button class="tab" onclick="showSection('statistiche')">📊 Statistiche</button>
         <button class="tab" onclick="showSection('config')">⚙️ Configurazioni</button>
     </div>
 
@@ -319,9 +323,22 @@
             <label>Descrizione Spettatori</label>
             <textarea id="gioco-desc-spettatori" placeholder="Descrizione per il pubblico"></textarea>
         </div>
+        <div class="form-group">
+            <label>URL Live Stream (opzionale)</label>
+            <input type="text" id="gioco-live-url" placeholder="https://youtube.com/...">
+        </div>
+        <div class="form-group">
+            <label>URL Tabellone Scontri (opzionale)</label>
+            <input type="text" id="gioco-bracket-url" placeholder="https://...immagine.png">
+        </div>
+        <div class="form-group">
+            <label>Numero Minimo Donne</label>
+            <input type="number" id="gioco-min-donne" value="2" min="0">
+        </div>
         <button class="btn" onclick="addGioco()">Aggiungi Gioco</button>
 
         <h3 style="margin-top: 30px; margin-bottom: 15px;">Giochi Esistenti</h3>
+        <p style="color: #5d4037; margin-bottom: 15px;">Clicca su un gioco per modificarlo o eliminarlo</p>
         <div id="giochi-list"></div>
     </div>
 
@@ -358,8 +375,85 @@
         <div id="highlights-list"></div>
     </div>
 
+    <div id="credenziali" class="section">
+        <h2>Gestione Credenziali</h2>
+
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 2px solid #8b6538;">
+            <h3 style="margin-bottom: 15px;">Le Tue Credenziali Amministratore</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Nuovo Username</label>
+                    <input type="text" id="admin-new-username" placeholder="Inserisci nuovo username">
+                </div>
+                <div class="form-group">
+                    <label>Nuova Password</label>
+                    <input type="password" id="admin-new-password" placeholder="Inserisci nuova password">
+                </div>
+            </div>
+            <button class="btn" onclick="changeAdminCredentials()">Aggiorna Credenziali Admin</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Credenziali Rioni</h3>
+        <div id="rioni-credentials-list"></div>
+    </div>
+
+    <div id="chat" class="section">
+        <h2>Chat con Capi-Rione</h2>
+        <div id="chat-messages" style="max-height: 400px; overflow-y: auto; background: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #8b6538;"></div>
+
+        <div class="form-group">
+            <label>Messaggio</label>
+            <textarea id="chat-text" placeholder="Scrivi un messaggio ai capi-rione..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>URL File (opzionale)</label>
+            <input type="text" id="chat-file-url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label>Nome File (opzionale)</label>
+            <input type="text" id="chat-file-name" placeholder="documento.pdf">
+        </div>
+        <button class="btn" onclick="sendChatMessage()">Invia Messaggio</button>
+    </div>
+
+    <div id="fasce-eta" class="section">
+        <h2>Gestione Fasce di Età</h2>
+
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 2px solid #8b6538;">
+            <h3 style="margin-bottom: 15px;">Aggiungi Nuova Fascia</h3>
+            <div class="form-group">
+                <label>Nome Fascia</label>
+                <input type="text" id="fascia-nome" placeholder="Es: Under 18">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Età Minima</label>
+                    <input type="number" id="fascia-min" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Età Massima</label>
+                    <input type="number" id="fascia-max" placeholder="100" min="0">
+                </div>
+            </div>
+            <button class="btn" onclick="addNewFasciaEta()">Aggiungi Fascia</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Fasce Esistenti</h3>
+        <div id="fasce-list"></div>
+    </div>
+
+    <div id="statistiche" class="section">
+        <h2>Statistiche Atleti</h2>
+        <button class="btn" onclick="loadAthleteStats()" style="margin-bottom: 20px;">Aggiorna Statistiche</button>
+        <div id="stats-container"></div>
+    </div>
+
     <div id="config" class="section">
         <h2>Configurazioni Globali</h2>
+        <div class="form-group">
+            <label>Numero Minimo Donne per Gioco</label>
+            <input type="number" id="config-min-donne" value="2" min="0">
+        </div>
         <div class="form-group">
             <label>Limite Bonus</label>
             <input type="number" id="config-bonus" value="3">
@@ -393,6 +487,8 @@
         loadGiochiList();
         loadHighlightsList();
         loadConfigForm();
+        loadRioniCredentials();
+        loadFasceList();
     });
 
     function showSection(sectionName) {
@@ -401,6 +497,12 @@
 
         document.getElementById(sectionName).classList.add('active');
         event.target.classList.add('active');
+
+        if (sectionName === 'chat') loadChatMessages();
+        if (sectionName === 'credenziali') loadRioniCredentials();
+        if (sectionName === 'fasce-eta') loadFasceList();
+        if (sectionName === 'statistiche') loadAthleteStats();
+        if (sectionName === 'giochi') loadGiochiList();
     }
 
     function showMessage(text, type = 'success') {
