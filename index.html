@@ -300,6 +300,9 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
+<script src="auth.js"></script>
 <script>
     function showAdminLogin() {
         const modal = document.getElementById('admin-login-modal');
@@ -313,27 +316,26 @@
         document.getElementById('admin-login-modal').style.display = 'none';
     }
 
-    function attemptAdminLogin() {
+    async function attemptAdminLogin() {
         const username = document.getElementById('admin-user').value;
         const password = document.getElementById('admin-pass').value;
 
-        if (username === 'admin' && password === 'admin123') {
-            localStorage.setItem('userRole', 'admin');
+        const result = await loginAdmin(username, password);
+
+        if (result.success) {
             window.location.href = 'admin_panel.html';
         } else {
             document.getElementById('login-error').style.display = 'block';
         }
     }
 
-    function attemptCaporioneLogin() {
+    async function attemptCaporioneLogin() {
         const username = document.getElementById('caporione-user').value;
         const password = document.getElementById('caporione-pass').value;
 
-        const validRioni = ['centro', 'nord', 'sud', 'est', 'ovest'];
+        const result = await loginCaporione(username, password);
 
-        if (validRioni.includes(username.toLowerCase()) && password === 'rione123') {
-            localStorage.setItem('userRole', 'caporione');
-            localStorage.setItem('rioneId', username.toLowerCase());
+        if (result.success) {
             window.location.href = 'caporione.html';
         } else {
             document.getElementById('login-error-capo').style.display = 'block';
