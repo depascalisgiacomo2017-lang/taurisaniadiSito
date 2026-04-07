@@ -1,11 +1,17 @@
 {
   "name": "taurisaniadi-2026",
   "version": "1.0.0",
-  "description": "Sistema di gestione Taurisaniadi 2026",
-  "main": "gestore_giochi.js",
+  "description": "Piattaforma gestionale Taurisaniadi 2026 con Supabase",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
-    "appwrite": "^24.1.1",
-    "node-appwrite": "^23.1.0"
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   }
 }

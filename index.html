@@ -4,47 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taurisaniadi 2026 - Accesso</title>
-    <!-- Font Eleganti / Classici -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             font-family: 'Playfair Display', serif;
             text-align: center;
             margin: 0;
             padding: 5vh 10px;
-            background-color: #f0f2f5;
-            background-image: url('../immagini/sitoBack.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #3e2723;
+            background-color: #1a237e;
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            color: #fff;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-image 0.3s ease-in-out;
-        }
-        
-        /* Sfondo Mobile */
-        @media (max-width: 600px) {
-            body {
-                background-image: url('../immagini/sfondoMobile.png'), url('../immagini/sitoBack.jpg');
-            }
         }
 
         .landing-container {
-            background-color: #fdf5e6; /* Colore pergamena */
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgogIDxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNmZGY1ZTYiPjwvcmVjdD4KICA8cGF0aCBkPSJNMCAwTDggOFoiIHN0cm9rZT0iI2YyZTljNyIgc3Ryb2tlLXdpZHRoPSIxIj48L3BhdGg+Cjwvc3ZnPg==');
+            background-color: #fdf5e6;
             max-width: 550px;
             width: 100%;
             padding: 40px 30px;
             border-radius: 6px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             border: 4px solid #c49a45;
-            outline: 2px solid #5d4037;
-            outline-offset: -10px;
-            position: relative;
         }
 
         h1.title {
@@ -54,10 +38,8 @@
             color: #002b5e;
             margin: 0 0 40px 0;
             letter-spacing: 2px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        /* Pulsanti base */
         button {
             display: block;
             width: 100%;
@@ -68,14 +50,13 @@
             background-color: #f4e8c1;
             color: #3e2723;
         }
-        
+
         button:hover {
             background-color: #eaddab;
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        /* Tasto Spettatore Gigante */
         .btn-main {
             font-size: 1.8em;
             padding: 30px;
@@ -83,7 +64,6 @@
             border-radius: 8px;
             margin-top: 10px;
             margin-bottom: 20px;
-            position: relative;
             background: linear-gradient(180deg, #fbf0d9, #eaddab);
             font-weight: 800;
             text-transform: uppercase;
@@ -95,7 +75,6 @@
             justify-content: center;
         }
 
-        /* Tasti secondari */
         .btn-secondary {
             font-size: 0.8em;
             padding: 10px 15px;
@@ -106,21 +85,6 @@
             max-width: 180px;
         }
 
-        /* Maschotte */
-        .maschotte-img {
-            max-width: 120px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* Modali login */
         .modal-overlay {
             display: none;
             background: rgba(253, 245, 230, 0.98);
@@ -129,7 +93,6 @@
             border-radius: 4px;
             margin-top: 15px;
             text-align: left;
-            box-shadow: inset 0 0 15px rgba(196, 154, 69, 0.2);
         }
 
         .modal-overlay h3 {
@@ -158,7 +121,6 @@
             display: none;
             margin-bottom: 10px;
             font-weight: bold;
-            font-family: 'Playfair Display', serif;
         }
 
         .btn-login {
@@ -169,77 +131,60 @@
             font-size: 1em;
             margin-top: 10px;
         }
-        
+
         .btn-login:hover {
             background-color: #3e2723;
             color: #fff;
         }
 
         @media (max-width: 600px) {
-            .landing-container { padding: 30px 15px; outline-offset: -6px; }
-            h1.title { font-size: 1.8em; margin-bottom: 30px; }
-            .btn-main { font-size: 1.3em; padding: 20px; margin-bottom: 20px; }
-            .secondary-actions { flex-direction: row; gap: 10px; }
+            .landing-container { padding: 30px 15px; }
+            h1.title { font-size: 1.8em; }
+            .btn-main { font-size: 1.3em; padding: 20px; }
             .btn-secondary { font-size: 0.75em; padding: 8px; }
-            
-            /* Testi scuri per mobile come da sprint */
-            .landing-container { color: #000; }
-            h1.title { color: #000; }
         }
     </style>
+</head>
 <body>
 
 <div class="landing-container">
-    <h1 class="title">TAVRISANIADI 2026</h1>
+    <h1 class="title">TAURISANIADI 2026</h1>
 
-    <!-- AZIONE PRINCIPALE: SPETTATORE -->
     <div class="main-actions">
         <button class="btn-main" onclick="window.location.href='spectator.html'">
-            entra nell'avventura 2026 🎭
+            Entra nell'Avventura
         </button>
     </div>
 
-    <!-- AZIONI SECONDARIE PICCOLE -->
     <div class="secondary-actions">
-        <button class="btn-secondary" onclick="showAdminLogin(event)">
-            amministratore 📜
+        <button class="btn-secondary" onclick="showAdminLogin()">
+            Amministratore
         </button>
-        <button class="btn-secondary" onclick="showCaporioneLogin(event)">
-            capo-rione 🛡️
+        <button class="btn-secondary" onclick="showCaporioneLogin()">
+            Capo-Rione
         </button>
     </div>
-</div>
 
-    <!-- MODALE LOGIN AMMINISTRATORE -->
     <div id="admin-login-modal" class="modal-overlay">
         <h3>Login Amministratore</h3>
         <input type="text" id="admin-user" placeholder="Nome Utente">
         <input type="password" id="admin-pass" placeholder="Password">
         <div id="login-error" class="error-msg">Credenziali non valide!</div>
-        <button class="btn-login" onclick="attemptAdminLogin()">Accedi 🔑</button>
+        <button class="btn-login" onclick="attemptAdminLogin()">Accedi</button>
     </div>
 
-    <!-- MODALE LOGIN CAPO RIONE -->
     <div id="caporione-login-modal" class="modal-overlay">
         <h3>Accesso Capo-Rione</h3>
         <input type="text" id="caporione-user" placeholder="Nome Utente">
         <input type="password" id="caporione-pass" placeholder="Password">
         <div id="login-error-capo" class="error-msg">Credenziali non valide!</div>
-        <button class="btn-login" onclick="attemptCaporioneLogin()">Accedi Area Rione 🛡️</button>
+        <button class="btn-login" onclick="attemptCaporioneLogin()">Accedi Area Rione</button>
     </div>
-
 </div>
 
-<!-- SCRIPT CONDIVISI -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-<script src="appwrite_adapter.js"></script>
-<script src="gestore_giochi.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (window.supabaseClient) {
-            await syncSupabaseState();
-        }
-    });
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
+<script src="auth.js"></script>
+
 </body>
 </html>

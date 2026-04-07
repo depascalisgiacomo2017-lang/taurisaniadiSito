@@ -3,393 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area Spettatore - Taurisaniadi</title>
-    <!-- Font Eleganti / Classici -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:ital@0;1&family=Cinzel+Decorative:wght@700;900&display=swap" rel="stylesheet">
-    
+    <title>Taurisaniadi 2026 - Vista Spettatore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Playfair Display', serif; 
-            background-color: #f0f2f5; 
-            background-image: url('../immagini/sitoBack.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed; 
-            color: #3e2723; 
-            padding: 20px; 
-            max-width: 900px; 
-            margin: auto; 
-        }
-        
-        .spectator-dashboard { 
-            background-color: #fdf5e6; 
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgogIDxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNmZGY1ZTYiPjwvcmVjdD4KICA8cGF0aCBkPSJNMCAwTDggOFoiIHN0cm9rZT0iI2YyZTljNyIgc3Ryb2tlLXdpZHRoPSIxIj48L3BhdGg+Cjwvc3ZnPg==');
-            padding: 40px; 
-            border-radius: 6px; 
-            box-shadow: inset 0 0 60px rgba(196,154,69,0.1), 0 15px 35px rgba(0,0,0,0.6);
-            border: 4px solid #c49a45;
-            outline: 2px solid #5d4037;
-            outline-offset: -10px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+            color: #fff;
+            padding: 20px;
         }
 
-        .header { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            border-bottom: 3px double #c49a45; 
-            padding-bottom: 25px; margin-bottom: 40px; 
-            gap: 20px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        h2 { 
-            font-family: 'Cinzel Decorative', 'Cinzel', serif; 
-            font-size: 3.2em; 
-            background: linear-gradient(90deg, #c49a45, #a67b30, #c49a45);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0; 
-            letter-spacing: 4px; 
-            text-shadow: 1px 1px 15px rgba(196, 154, 69, 0.4); 
+
+        header {
             text-align: center;
-            text-transform: uppercase;
-        }
-        
-        h3 { 
-            font-family: 'Cinzel Decorative', 'Cinzel', serif; 
-            font-size: 1.6em; 
-            color: #5d4037; 
-            margin-top: 0; 
-            display: inline-block; 
-            padding-bottom: 5px; 
-            margin-bottom: 25px;
-            position: relative;
+            padding: 30px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
         }
 
-        h3::after {
-            content: '';
-            position: absolute;
-            width: 40%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(90deg, #c49a45, transparent);
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 10px;
         }
 
-        .header a { color: #d32f2f; text-decoration: none; font-weight: bold; font-family: 'Playfair Display', serif; }
-        .header a:hover { text-decoration: underline; }
-        
-        .live-tv-container { position: relative; display: inline-flex; align-items: center; justify-content: center; margin-right: 20px; color: #3e2723; transition: transform 0.2s; text-decoration: none !important; }
-        .live-tv-container:hover { transform: scale(1.1); color: #002b5e; }
-        .live-badge { position: absolute; top: -8px; right: -12px; background-color: #d32f2f; color: white; font-family: 'Segoe UI', sans-serif; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 12px; border: 2px solid white; animation: pulse 2s infinite; text-transform: uppercase; line-height: 1; pointer-events: none; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(211, 47, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
-        .header-actions { display: flex; align-items: center; }
-
-        .section { margin-bottom: 45px; }
-
-        /* Stile Papiro/Pergamena per le singole schede */
-        .media-card { 
-            background: #fffdf8; 
-            border: 1px solid #c49a45; 
-            padding: 20px; 
-            border-radius: 4px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            text-align: left;
-            transition: all 0.3s ease;
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
-        .media-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(196, 154, 69, 0.2);
-            border-color: #a67b30;
-        }
-
-        .gold-divider {
-            border: none;
-            border-top: 2px dashed #c49a45;
-            margin: 30px 0 40px 0;
-            opacity: 0.6;
-        }
-
-        /* Pulsante Home Stile Romano */
-        .btn-home {
-            display: inline-block;
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            cursor: pointer;
             font-family: 'Cinzel', serif;
             font-weight: 600;
-            background: linear-gradient(180deg, #fbf0d9, #eaddab);
-            color: #3e2723;
-            text-decoration: none;
-            padding: 15px 35px;
-            border-radius: 4px;
-            font-size: 1.25em;
-            border: 3px double #5d4037;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .btn-home:hover {
-            background: #eaddab;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            color: #fff;
+            transition: all 0.3s;
         }
 
-        .btn-action {
-            background:#fbf0d9; 
-            border: 1px solid #c49a45; 
-            color:#5d4037; 
-            padding:8px 15px; 
-            border-radius:4px; 
-            text-decoration:none; 
-            font-family:'Cinzel', serif; 
-            font-weight:bold; 
-            font-size:0.9em; 
-            box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
+        .tab:hover, .tab.active {
+            background: #ffd700;
+            color: #1a237e;
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 10px;
+            color: #333;
+            min-height: 400px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .game-card {
+            background: #f5f5f5;
+            border-left: 5px solid #1a237e;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .game-card h3 {
+            color: #1a237e;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            padding: 8px;
+            background: #fff;
+            border-radius: 3px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #1a237e;
+            font-size: 0.9em;
+        }
+
+        .highlight-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .highlight-card img, .highlight-card video {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .highlight-content {
+            padding: 15px;
+        }
+
+        .highlight-title {
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 5px;
+        }
+
+        .btn-home {
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1a237e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn-home:hover {
+            background: #0d47a1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
         }
 
         @media (max-width: 768px) {
-            .header { align-items: center; gap: 15px; padding-bottom:15px; }
-            .header-actions { justify-content: center !important; gap: 10px; }
-            body { padding: 10px; color: #000; } /* Testo scuro mobile */
-            h2 { font-size: 2.2em; margin: 0; color: #000; }
-            h3 { font-size: 1.3em; color: #000; }
-            .spectator-dashboard { padding: 25px 15px; outline-offset: -6px; margin: 0; color: #000; }
-            .live-tv-container { margin-right: 0; margin-top: 10px; align-self: center; }
-            .media-card { padding: 15px; color: #000; }
-            .btn-home { font-size: 1.1em; padding: 12px 20px; }
-            p, div, span { color: #000 !important; } /* Forza testo nero su mobile per visibilità */
+            h1 { font-size: 1.8em; }
+            .tabs { gap: 5px; }
+            .tab { padding: 8px 16px; font-size: 0.9em; }
+            .content-section { padding: 20px; }
         }
     </style>
+</head>
 <body>
 
-<div class="spectator-dashboard">
-    <div class="header">
-        <h2>BENVENUTI</h2>
-        <div class="header-actions" style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; justify-content: space-between; width: 100%;">
-            <div id="social-links-container" style="display:flex; flex-wrap:wrap; gap: 10px; align-items:center;"></div>
-            <a href="https://www.instagram.com/chiesa_madre_trasfigurazione?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="live-tv-container" title="Guarda la Live su Instagram" style="margin-right:0;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tv"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
-                <span class="live-badge">LIVE</span>
-            </a>
+<div class="container">
+    <header>
+        <h1>TAURISANIADI 2026</h1>
+        <p>Vista Spettatore</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('giochi')">Giochi</button>
+        <button class="tab" onclick="showTab('calendario')">Calendario</button>
+        <button class="tab" onclick="showTab('highlights')">Momenti Salienti</button>
+        <button class="tab" onclick="showTab('info')">Informazioni</button>
+    </div>
+
+    <div id="giochi" class="content-section active">
+        <h2>Giochi Disponibili</h2>
+        <div id="games-list"></div>
+    </div>
+
+    <div id="calendario" class="content-section">
+        <h2>Calendario Eventi</h2>
+        <div id="calendar-list"></div>
+    </div>
+
+    <div id="highlights" class="content-section">
+        <h2>Momenti Salienti</h2>
+        <div id="highlights-list"></div>
+    </div>
+
+    <div id="info" class="content-section">
+        <h2>Informazioni Generali</h2>
+        <div id="info-content">
+            <p>Benvenuti alle Taurisaniadi 2026!</p>
+            <p>Seguite tutti gli aggiornamenti e le competizioni tra i rioni.</p>
         </div>
     </div>
 
-    <div class="section" id="programma-giochi-section">
-        <h3>PROGRAMMA GIOCHI</h3>
-        <div id="spettatore-games-list">
-            <!-- Dinamico -->
-        </div>
-    </div>
-
-    <hr class="gold-divider">
-
-    <div class="section" id="mappa-section">
-        <h3>MAPPA</h3>
-        <div id="spettatore-mappa-view" class="media-card" style="text-align: center;">
-            <!-- Dinamico -->
-        </div>
-    </div>
-
-    <hr class="gold-divider">
-
-    <div class="section" id="classifica-section">
-        <h3>CLASSIFICA GENERALE</h3>
-        <div id="spettatore-classifica-view" class="media-card" style="text-align: center;">
-            <!-- Dinamico -->
-        </div>
-    </div>
-
-    <hr class="gold-divider">
-
-    <div class="section" id="highlights-section">
-        <h3>MOMENTI SALIENTI</h3>
-        <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <label for="filter-date" style="font-family: 'Cinzel', serif; font-weight: bold; color: #5d4037;">Filtra per giorno:</label>
-            <input type="date" id="filter-date" style="padding: 8px; border: 1px solid #c49a45; border-radius: 4px; font-family: 'Playfair Display', serif;" onchange="renderHighlights()">
-            <button class="btn-action" style="margin-top:0;" onclick="document.getElementById('filter-date').value = ''; renderHighlights();">TUTTI</button>
-        </div>
-        <div id="spettatore-highlights-view">
-            <!-- Dinamico -->
-        </div>
-    </div>
-
-    <!-- Bottone di ritorno alla home -->
-    <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid #c49a45;">
-        <a href="index.html" class="btn-home">⬅️ TORNA AL PORTALE</a>
+    <div style="text-align: center;">
+        <a href="index.html" class="btn-home">Torna al Portale</a>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-<script src="appwrite_adapter.js"></script>
-<script src="gestore_giochi.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (window.supabaseClient) {
-            await syncSupabaseState();
+    function showTab(tabName) {
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+
+        if (tabName === 'giochi') loadGames();
+        if (tabName === 'calendario') loadCalendar();
+        if (tabName === 'highlights') loadHighlights();
+    }
+
+    async function loadGames() {
+        const gamesList = document.getElementById('games-list');
+
+        if (!window.appState.giochi || window.appState.giochi.length === 0) {
+            gamesList.innerHTML = '<div class="empty-state"><p>Nessun gioco disponibile al momento</p></div>';
+            return;
         }
-        
-        const renderSocialLinks = () => {
-            let conf = getGlobalConfig();
-            let container = document.getElementById('social-links-container');
-            if(!container) return;
-            container.innerHTML = '';
-            if(conf.whatsappLink) {
-                container.innerHTML += `<a href="${conf.whatsappLink}" target="_blank" class="btn-action">💬 WHATSAPP</a>`;
-            }
-            if(conf.discordLink) {
-                container.innerHTML += `<a href="${conf.discordLink}" target="_blank" class="btn-action">🎮 DISCORD</a>`;
-            }
-        };
-        renderSocialLinks();
 
-        window.renderSpectatorGames = () => {
-            let list = document.getElementById('spettatore-games-list');
-            if(!list) return;
-            let games = getSavedGames();
-            list.innerHTML = '';
-            if(games.length === 0) {
-                list.innerHTML = '<p style="color: #5d4037; font-style: italic;">Nessun gioco programmato al momento.</p>';
-                return;
-            }
-            games.forEach(g => {
-                let isNow = false;
-                if(g.date && g.timeStart && g.timeEnd) {
-                    let now = new Date();
-                    let [y, m, d] = g.date.split('-');
-                    let [sH, sM] = g.timeStart.split(':');
-                    let [eH, eM] = g.timeEnd.split(':');
-                    let ds = new Date(y, m-1, d, sH, sM);
-                    let de = new Date(y, m-1, d, eH, eM);
-                    if(now >= ds && now <= de) isNow = true;
-                } else if (g.inProgress) { isNow = true; } 
-                
-                let badge = isNow ? `<span style="background: #e8f5e9; color: #4CAF50; border: 1px solid #c8e6c9; padding: 4px 8px; border-radius: 4px; font-size: 0.7em; font-family:'Segoe UI', sans-serif; font-weight:bold; margin-left:10px; vertical-align:middle;">🟢 IN CORSO</span>` : '';
-                let sfBtn = '';
-                if(g.restrictedRioni) sfBtn = `<div style="font-size:0.85em; font-family:'Cinzel', serif; color:#d32f2f; margin-bottom:10px; font-weight:bold;">⚔️ Sfida Diretta</div>`;
-                
-                const bracketId = `bracket-${g.id}`;
-                let bracketHtml = g.bracketImage ? `
-                    <div id="${bracketId}" style="display:none; margin-top:15px;">
-                        <img src="${g.bracketImage}" style="max-width:100%; border-radius:4px; border: 1px solid #c49a45; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    </div>
-                    <button class="btn-action" onclick="document.getElementById('${bracketId}').style.display = document.getElementById('${bracketId}').style.display === 'none' ? 'block' : 'none'">🏆 MOSTRA TABELLONE</button>
-                ` : '';
-                
-                let scheduleLine = g.timeStart ? `${g.timeStart} - ${g.timeEnd}` : (g.schedule || 'Da definire');
-                
-                list.innerHTML += `<div class="media-card">
-                    <h4 style="margin-top:0; margin-bottom:10px; color:#002b5e; font-family:'Cinzel', serif; font-size: 1.4em; display:flex; align-items:center; flex-wrap:wrap; gap:5px;">${g.name} ${badge}</h4>
-                    ${sfBtn}
-                    <div style="font-size:0.95em; color: #5d4037;">
-                        <p style="margin:5px 0;"><strong>LUOGO:</strong> ${g.location || 'Da definire'}</p>
-                        <p style="margin:5px 0;"><strong>DATA:</strong> ${typeof formatDateITA === 'function' ? formatDateITA(g.date) : (g.date || 'Da definire')}</p>
-                        <p style="margin:5px 0;"><strong>ORARIO:</strong> ${scheduleLine}</p>
-                    </div>
-                    
-                    <div id="desc-spec-${g.id}" data-collapsed="true" style="margin:15px 0 5px 0; color:#3e2723; line-height: 1.5; font-style: italic; overflow-wrap: break-word; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
-                        ${g.descSpectator ? g.descSpectator.replace(/\n/g, '<br>') : 'La cronaca di questa gloriosa sfida non è ancora stata tramandata...'}
-                    </div>
-                    ${g.descSpectator && g.descSpectator.length > 80 ? `<a href="#" onclick="toggleDesc(event, 'desc-spec-${g.id}', this)" data-text-more="MOSTRA ALTRO ▼" data-text-less="MOSTRA MENO ▲" style="display:inline-block; margin-top:8px; color:#c49a45; text-decoration:none; font-family:'Cinzel', serif; font-weight:bold; font-size:0.9em; transition:color 0.2s;" onmouseover="this.style.color='#a67b30'" onmouseout="this.style.color='#c49a45'">MOSTRA ALTRO ▼</a>` : ''}
+        gamesList.innerHTML = window.appState.giochi.map(game => `
+            <div class="game-card">
+                <h3>${game.name}</h3>
+                <p>${game.desc_spectator || game.description || ''}</p>
+                <div class="game-info">
+                    ${game.location ? `<div class="info-item"><span class="info-label">Luogo:</span> ${game.location}</div>` : ''}
+                    ${game.date ? `<div class="info-item"><span class="info-label">Data:</span> ${new Date(game.date).toLocaleDateString('it-IT')}</div>` : ''}
+                    ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${game.time_start}</div>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
 
-                    ${bracketHtml}
-                </div>`;
-            });
-        };
-        window.renderSpectatorGames();
-        setInterval(window.renderSpectatorGames, 60000);
+    async function loadCalendar() {
+        const calendarList = document.getElementById('calendar-list');
 
-        // Mappa
-        const renderMap = () => {
-            const divMappa = document.getElementById('spettatore-mappa-view');
-            const mappaUrl = getMapImage();
-            if(mappaUrl) {
-                divMappa.innerHTML = `<img src="${mappaUrl}" alt="Mappa del Paese" style="max-width: 100%; border-radius: 4px; border: 1px solid #c49a45; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">`;
-            } else {
-                divMappa.innerHTML = `<p style="color: #5d4037; font-style: italic;">Mappa non ancora disponibile.</p>`;
-            }
-        };
-        renderMap();
+        const gamesWithDates = window.appState.giochi.filter(g => g.date).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        const renderClassifica = () => {
-            const urlClassifica = loadClassifica();
-            const divClassifica = document.getElementById('spettatore-classifica-view');
-            if (urlClassifica) {
-                divClassifica.innerHTML = `<img src="${urlClassifica}" alt="Classifica" style="max-width: 100%; border-radius: 4px; border: 1px solid #c49a45; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">`;
-            } else {
-                divClassifica.innerHTML = `<p style="color: #5d4037; font-style: italic; font-size: 1.1em;">Non è presente nessuna classifica, aspetta ancora un po'.</p>`;
-            }
-        };
-        renderClassifica();
+        if (gamesWithDates.length === 0) {
+            calendarList.innerHTML = '<div class="empty-state"><p>Nessun evento in calendario</p></div>';
+            return;
+        }
 
-        const renderHighlights = () => {
-            const divHighlights = document.getElementById('spettatore-highlights-view');
-            const filterDate = document.getElementById('filter-date').value;
-            let highlights = loadHighlights();
-            divHighlights.innerHTML = '';
-            
-            // Ordina dal più recente al meno recente
-            highlights.sort((a, b) => b.id - a.id);
+        calendarList.innerHTML = gamesWithDates.map(game => `
+            <div class="game-card">
+                <h3>${game.name}</h3>
+                <div class="game-info">
+                    <div class="info-item"><span class="info-label">Data:</span> ${new Date(game.date).toLocaleDateString('it-IT')}</div>
+                    ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${game.time_start} - ${game.time_end || ''}</div>` : ''}
+                    ${game.location ? `<div class="info-item"><span class="info-label">Luogo:</span> ${game.location}</div>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
 
-            // Filtra per data se selezionata
-            if (filterDate) {
-                highlights = highlights.filter(h => h.date === filterDate);
-            }
+    async function loadHighlights() {
+        const highlightsList = document.getElementById('highlights-list');
 
-            if (highlights.length === 0) {
-                divHighlights.innerHTML = `<p style="color: #5d4037; font-style: italic;">Nessun momento saliente disponibile ${filterDate ? 'per questa data' : 'al momento'}.</p>`;
-            } else {
-                highlights.forEach(h => {
-                    const card = document.createElement('div');
-                    card.className = 'media-card';
-                    let mediaContent = '';
-                    if (h.type === 'video') {
-                        mediaContent = `<a href="${h.url}" target="_blank" style="color: #d32f2f; font-family:'Cinzel', serif; font-weight: bold; font-size: 1.1em; text-decoration: none;">▶️ GUARDA IL VIDEO</a>`;
-                    } else {
-                        mediaContent = `<img src="${h.url}" alt="Momento Saliente" style="max-width: 100%; border-radius: 4px; margin-top: 10px; border: 1px solid #c49a45; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">`;
-                    }
-                    
-                    card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                            <h4 style="margin:0; color:#002b5e; font-family:'Cinzel', serif; font-size:1.3em;">${h.title || (h.type === 'video' ? '🎥 Video' : '📸 Foto')}</h4>
-                            <span style="font-family:'Cinzel', serif; font-size:0.8em; color:#888;">📅 ${formatDateITA(h.date) || 'Recentemente'}</span>
-                        </div>
-                        <p style="font-size:0.95em; color:#5d4037; font-style:italic; margin-bottom:15px;">${h.description || ''}</p>
-                        ${mediaContent}
-                    `;
-                    divHighlights.appendChild(card);
-                });
-            }
-        };
-        window.renderHighlights = renderHighlights; // Esponi globalmente per l'evento onchange
-        renderHighlights();
+        if (!window.appState.momenti_salienti || window.appState.momenti_salienti.length === 0) {
+            highlightsList.innerHTML = '<div class="empty-state"><p>Nessun momento saliente disponibile</p></div>';
+            return;
+        }
 
-        // Controllo "Diretta Instagram"
-        const liveContainer = document.querySelector('.live-tv-container');
-        const liveBadge = document.querySelector('.live-badge');
-        if (liveContainer && liveBadge) {
-            const updateLiveStatus = (isLive) => {
-                liveBadge.style.display = isLive ? 'block' : 'none';
-                liveContainer.style.color = isLive ? '#002b5e' : '#3e2723';
-            };
-
-            const isLive = supabaseData.config && supabaseData.config.ig_live === 'true';
-            updateLiveStatus(isLive);
-
-            // Polling leggero ogni 15 secondi per sincronizzare con Supabase
-            setInterval(async () => {
-                if (window.supabaseClient) {
-                    await syncSupabaseState();
-                    renderClassifica();
-                    window.renderSpectatorGames();
-                    renderHighlights();
-                    renderMap();
-                    const newIsLive = supabaseData.config && supabaseData.config.ig_live === 'true';
-                    updateLiveStatus(newIsLive);
+        highlightsList.innerHTML = window.appState.momenti_salienti.map(highlight => `
+            <div class="highlight-card">
+                ${highlight.type === 'photo'
+                    ? `<img src="${highlight.url}" alt="${highlight.title || 'Foto'}">`
+                    : `<video controls src="${highlight.url}"></video>`
                 }
-            }, 15000);
-        }
+                <div class="highlight-content">
+                    <div class="highlight-title">${highlight.title || ''}</div>
+                    <p>${highlight.description || ''}</p>
+                    <small>${highlight.highlight_date ? new Date(highlight.highlight_date).toLocaleDateString('it-IT') : ''}</small>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadData();
+        loadGames();
     });
 </script>
+
 </body>
 </html>
