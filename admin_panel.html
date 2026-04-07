@@ -4,23 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pannello Amministratore - Taurisaniadi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Playfair Display', serif;
+            background-image: url('immagini/sitoBack.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             padding: 20px;
-            color: #333;
+            color: #2c1810;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-image: url('immagini/sfondoMobile.png');
+            }
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: #fff;
-            border-radius: 10px;
+            background: linear-gradient(to bottom, rgba(244, 232, 208, 0.98), rgba(235, 218, 186, 0.98));
+            border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 8px #d4a574,
+                inset 0 0 0 12px #8b6538,
+                inset 0 0 0 14px #d4a574;
+            border: 4px solid #8b6538;
         }
 
         header {
@@ -28,23 +43,39 @@
             justify-content: space-between;
             align-items: center;
             padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
+            border-bottom: 3px solid #8b6538;
             margin-bottom: 30px;
         }
 
         h1 {
-            color: #667eea;
+            color: #2c1810;
             font-size: 2em;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        h1::before {
+            content: '👑 ';
+            margin-right: 10px;
         }
 
         .logout-btn {
             padding: 10px 20px;
-            background: #d32f2f;
-            color: white;
-            border: none;
-            border-radius: 5px;
+            background: linear-gradient(180deg, #c62828 0%, #b71c1c 100%);
+            color: #f4e8d0;
+            border: 2px solid #8b0000;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #b71c1c 0%, #8b0000 100%);
         }
 
         .tabs {
@@ -56,24 +87,36 @@
 
         .tab {
             padding: 12px 20px;
-            background: #f5f5f5;
-            border: 2px solid #667eea;
-            border-radius: 5px;
+            background: linear-gradient(180deg, #e8d4b0 0%, #c9a876 100%);
+            border: 3px solid #8b6538;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2c1810;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             transition: all 0.3s;
         }
 
-        .tab:hover, .tab.active {
-            background: #667eea;
-            color: white;
+        .tab:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
+        }
+
+        .tab.active {
+            background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%);
+            color: #f4e8d0;
         }
 
         .section {
             display: none;
-            background: #f9f9f9;
+            background: rgba(255, 253, 248, 0.9);
             padding: 25px;
             border-radius: 8px;
+            border: 2px solid #d4a574;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
 
         .section.active {
@@ -88,16 +131,25 @@
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
-            color: #555;
+            color: #2c1810;
+            font-family: 'Cinzel', serif;
         }
 
         input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 2px solid #8b6538;
             border-radius: 5px;
             font-size: 1em;
-            font-family: inherit;
+            font-family: 'Playfair Display', serif;
+            background: #fffdf8;
+            color: #2c1810;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #d4a574;
+            box-shadow: 0 0 5px rgba(212, 165, 116, 0.5);
         }
 
         textarea {
@@ -107,43 +159,53 @@
 
         .btn {
             padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
+            background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%);
+            color: #f4e8d0;
+            border: 2px solid #5d4037;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
             margin-right: 10px;
             margin-top: 10px;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
         }
 
         .btn:hover {
-            background: #5568d3;
+            background: linear-gradient(180deg, #6d4c2a 0%, #5d4037 100%);
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: #d32f2f;
+            background: linear-gradient(180deg, #c62828 0%, #b71c1c 100%);
+            border: 2px solid #8b0000;
         }
 
         .btn-danger:hover {
-            background: #b71c1c;
+            background: linear-gradient(180deg, #b71c1c 0%, #8b0000 100%);
         }
 
         .list-item {
-            background: white;
+            background: #fffdf8;
             padding: 15px;
             margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            border-left: 5px solid #8b6538;
+            border: 2px solid #d4a574;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .list-item h3 {
-            color: #667eea;
+            color: #2c1810;
             margin-bottom: 5px;
+            font-family: 'Cinzel', serif;
         }
 
         .grid-2 {
@@ -191,10 +253,10 @@
     <div id="message" class="message"></div>
 
     <div class="tabs">
-        <button class="tab active" onclick="showSection('rioni')">Rioni</button>
-        <button class="tab" onclick="showSection('giochi')">Giochi</button>
-        <button class="tab" onclick="showSection('highlights')">Momenti Salienti</button>
-        <button class="tab" onclick="showSection('config')">Configurazioni</button>
+        <button class="tab active" onclick="showSection('rioni')">🏛️ Rioni</button>
+        <button class="tab" onclick="showSection('giochi')">⚔️ Giochi</button>
+        <button class="tab" onclick="showSection('highlights')">🏆 Momenti Salienti</button>
+        <button class="tab" onclick="showSection('config')">⚙️ Configurazioni</button>
     </div>
 
     <div id="rioni" class="section active">
