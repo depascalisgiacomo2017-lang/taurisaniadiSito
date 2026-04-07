@@ -16,13 +16,26 @@ async function attemptAdminLogin() {
     const username = document.getElementById('admin-user').value;
     const password = document.getElementById('admin-pass').value;
 
-    const adminCreds = window.appState.config.admin_creds;
+    try {
+        const { data: configData, error } = await window.supabaseClient
+            .from('impostazioni')
+            .select('value')
+            .eq('key', 'admin_creds')
+            .maybeSingle();
 
-    if (adminCreds && username === adminCreds.username && password === adminCreds.password) {
-        sessionStorage.setItem('userRole', 'admin');
-        sessionStorage.setItem('userName', 'Amministratore');
-        window.location.href = 'admin_panel.html';
-    } else {
+        if (error) throw error;
+
+        const adminCreds = configData?.value;
+
+        if (adminCreds && username === adminCreds.username && password === adminCreds.password) {
+            sessionStorage.setItem('userRole', 'admin');
+            sessionStorage.setItem('userName', 'Amministratore');
+            window.location.href = 'admin_panel.html';
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Errore login admin:', error);
         document.getElementById('login-error').style.display = 'block';
     }
 }
@@ -31,14 +44,26 @@ async function attemptCaporioneLogin() {
     const username = document.getElementById('caporione-user').value;
     const password = document.getElementById('caporione-pass').value;
 
-    const rione = window.appState.rioni.find(r => r.username === username && r.password === password);
+    try {
+        const { data: rione, error } = await window.supabaseClient
+            .from('rioni')
+            .select('*')
+            .eq('username', username)
+            .eq('password', password)
+            .maybeSingle();
 
-    if (rione) {
-        sessionStorage.setItem('userRole', 'caporione');
-        sessionStorage.setItem('rioneId', rione.id);
-        sessionStorage.setItem('rioneName', rione.nome);
-        window.location.href = 'caporione.html';
-    } else {
+        if (error) throw error;
+
+        if (rione) {
+            sessionStorage.setItem('userRole', 'caporione');
+            sessionStorage.setItem('rioneId', rione.id);
+            sessionStorage.setItem('rioneName', rione.nome);
+            window.location.href = 'caporione.html';
+        } else {
+            document.getElementById('login-error-capo').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Errore login caporione:', error);
         document.getElementById('login-error-capo').style.display = 'block';
     }
 }
