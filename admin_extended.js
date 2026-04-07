@@ -492,7 +492,7 @@ async function addGioco() {
         in_progress: false
     };
 
-    const { data, error } = await window.supabaseClient
+    const { data: insertedData, error } = await window.supabaseClient
         .from('giochi')
         .insert(gameData);
 
