@@ -326,6 +326,7 @@
 <script type="module" src="/supabase_client.js"></script>
 <script type="module" src="/auth.js"></script>
 <script type="module" src="/caporione_functions.js"></script>
+<script type="module" src="/caporione_positions.js"></script>
 <script>
     if (localStorage.getItem('userRole') !== 'caporione') {
         window.location.href = 'index.html';
@@ -344,7 +345,7 @@
         }
 
         loadAtletiList();
-        loadFormazioniList();
+        loadFormazioniListWithPositions();
         loadChatMessages();
     });
 

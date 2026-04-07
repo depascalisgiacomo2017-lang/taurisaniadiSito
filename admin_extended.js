@@ -456,16 +456,27 @@ async function addGioco() {
     const descTecnica = document.getElementById('gioco-desc-tecnica').value;
     const descSpettatori = document.getElementById('gioco-desc-spettatori').value;
     const liveUrl = document.getElementById('gioco-live-url').value;
-    const minDonne = parseInt(document.getElementById('gioco-min-donne').value) || 0;
     const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 1;
-    const minAge = parseInt(document.getElementById('gioco-min-age').value) || 0;
-    const maxAge = parseInt(document.getElementById('gioco-max-age').value) || 99;
     const bonusPerPlayer = parseInt(document.getElementById('gioco-bonus-per-player').value) || 0;
     const bracketFile = document.getElementById('gioco-bracket-file').files[0];
 
     if (!nome) {
         showMessage('Inserisci il nome del gioco', true);
         return;
+    }
+
+    const playerPositions = [];
+    for (let i = 1; i <= totalPlayers; i++) {
+        const minAge = parseInt(document.getElementById(`pos-${i}-min-age`)?.value) || 0;
+        const maxAge = parseInt(document.getElementById(`pos-${i}-max-age`)?.value) || 99;
+        const requiredGender = document.getElementById(`pos-${i}-gender`)?.value || null;
+
+        playerPositions.push({
+            position: i,
+            min_age: minAge,
+            max_age: maxAge,
+            required_gender: requiredGender === 'any' ? null : requiredGender
+        });
     }
 
     let bracketUrl = null;
@@ -492,11 +503,9 @@ async function addGioco() {
         desc_spectator: descSpettatori || null,
         live_stream_url: liveUrl || null,
         bracket_image_url: bracketUrl,
-        mandatory_women: minDonne,
         total_players: totalPlayers,
-        min_age: minAge,
-        max_age: maxAge,
         bonus_per_player: bonusPerPlayer,
+        player_positions: playerPositions,
         slots: [],
         restricted_rioni: [],
         in_progress: false
@@ -522,14 +531,54 @@ async function addGioco() {
     document.getElementById('gioco-desc-spettatori').value = '';
     document.getElementById('gioco-live-url').value = '';
     document.getElementById('gioco-bracket-file').value = '';
-    document.getElementById('gioco-min-donne').value = '2';
     document.getElementById('gioco-total-players').value = '5';
-    document.getElementById('gioco-min-age').value = '18';
-    document.getElementById('gioco-max-age').value = '35';
     document.getElementById('gioco-bonus-per-player').value = '0';
+    document.getElementById('positions-config').innerHTML = '';
 
     await loadData();
     loadGiochiList();
+}
+
+function updatePositionsConfig() {
+    const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 0;
+    const container = document.getElementById('positions-config');
+
+    if (!container || totalPlayers === 0) return;
+
+    let html = '<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">';
+    html += '<h4 style="margin-bottom: 15px; color: #2c1810;">Configurazione Posizioni</h4>';
+
+    for (let i = 1; i <= totalPlayers; i++) {
+        html += `
+            <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 2px solid #8b6538;">
+                <h5 style="margin-bottom: 10px; color: #5d4037;">Posizione ${i}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Min</label>
+                        <input type="number" id="pos-${i}-min-age" value="0" min="0"
+                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Max</label>
+                        <input type="number" id="pos-${i}-max-age" value="99" min="0"
+                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Sesso Richiesto</label>
+                        <select id="pos-${i}-gender"
+                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                            <option value="any">Qualsiasi</option>
+                            <option value="M">Maschio</option>
+                            <option value="F">Femmina</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 function loadRioniList() {
@@ -631,6 +680,7 @@ window.editGame = editGame;
 window.deleteGameUI = deleteGameUI;
 window.addRione = addRione;
 window.addGioco = addGioco;
+window.updatePositionsConfig = updatePositionsConfig;
 window.loadRioniList = loadRioniList;
 window.loadHighlightsList = loadHighlightsList;
 window.loadConfigForm = loadConfigForm;
