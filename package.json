@@ -1,0 +1,11 @@
+{
+  "name": "taurisaniadi-2026",
+  "version": "1.0.0",
+  "description": "Sistema di gestione Taurisaniadi 2026",
+  "main": "gestore_giochi.js",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "appwrite": "^24.1.1",
+    "node-appwrite": "^23.1.0"
+  }
+}
