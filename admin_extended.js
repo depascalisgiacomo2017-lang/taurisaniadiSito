@@ -338,12 +338,15 @@ function loadGiochiList() {
 
         const date = gioco.date ? new Date(gioco.date).toLocaleDateString('it-IT') : 'N/A';
 
+        const womenCount = gioco.mandatory_women !== null ? gioco.mandatory_women :
+            (gioco.player_positions?.filter(p => p.required_gender === 'F').length || 0);
+
         item.innerHTML = `
             <div style="width: 100%;">
                 <h3>${gioco.name}</h3>
                 <p style="color: #5d4037; margin-top: 5px;">
                     📅 ${date} | ⏰ ${gioco.time_start || 'N/A'} - ${gioco.time_end || 'N/A'}<br>
-                    📍 ${gioco.location || 'N/A'} | 👩 Min. donne: ${gioco.mandatory_women || 0}
+                    📍 ${gioco.location || 'N/A'} | 👩 Min. donne: ${womenCount} ${gioco.mandatory_women === null ? '(auto)' : '(manuale)'}
                     ${gioco.live_stream_url ? '<br>📹 Live attivo' : ''}
                     ${gioco.bracket_image_url ? '<br>🏆 Tabellone presente' : ''}
                 </p>
@@ -370,7 +373,7 @@ function editGame(gameId) {
     const oraFine = prompt('Ora fine (HH:MM):', gioco.time_end || '');
     const liveUrl = prompt('URL Live Stream:', gioco.live_stream_url || '');
     const bracketUrl = prompt('URL Tabellone:', gioco.bracket_image_url || '');
-    const minDonne = prompt('Numero minimo donne:', gioco.mandatory_women || 0);
+    const minDonne = prompt('Numero minimo donne (lascia vuoto per calcolo automatico):', gioco.mandatory_women !== null ? gioco.mandatory_women : '');
 
     const updates = {
         nome: nome || gioco.name,
@@ -380,7 +383,7 @@ function editGame(gameId) {
         ora_fine: oraFine || gioco.time_end,
         live_stream_url: liveUrl || null,
         bracket_image_url: bracketUrl || null,
-        mandatory_women: parseInt(minDonne) || 0
+        mandatory_women: minDonne ? parseInt(minDonne) : null
     };
 
     updateGame(gameId, updates).then(result => {
@@ -458,6 +461,8 @@ async function addGioco() {
     const liveUrl = document.getElementById('gioco-live-url').value;
     const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 1;
     const bonusPerPlayer = parseInt(document.getElementById('gioco-bonus-per-player').value) || 0;
+    const mandatoryWomenInput = document.getElementById('gioco-mandatory-women').value;
+    const mandatoryWomen = mandatoryWomenInput ? parseInt(mandatoryWomenInput) : null;
     const bracketFile = document.getElementById('gioco-bracket-file').files[0];
 
     if (!nome) {
@@ -505,6 +510,7 @@ async function addGioco() {
         bracket_image_url: bracketUrl,
         total_players: totalPlayers,
         bonus_per_player: bonusPerPlayer,
+        mandatory_women: mandatoryWomen,
         player_positions: playerPositions,
         slots: [],
         restricted_rioni: [],

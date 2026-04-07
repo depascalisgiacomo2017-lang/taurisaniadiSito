@@ -198,7 +198,7 @@ function loadFormazioniList() {
 
                 <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
                     <p style="color: #5d4037; margin-bottom: 5px;">
-                        <strong>Requisiti:</strong> ${gioco.total_players || 5} giocatori (min ${gioco.mandatory_women || 0} donne)
+                        <strong>Requisiti:</strong> ${gioco.total_players || 5} giocatori (min ${gioco.mandatory_women !== null ? gioco.mandatory_women : (gioco.player_positions?.filter(p => p.required_gender === 'F').length || 0)} donne)
                     </p>
                     <p style="color: #5d4037; margin-bottom: 5px;">
                         <strong>Fascia Età:</strong> ${gioco.min_age || 0} - ${gioco.max_age || 99} anni
@@ -416,7 +416,9 @@ function validateSquad(gameId) {
     const atleti = getRioneAtleti();
 
     const totalPlayers = gioco.total_players || 5;
-    const mandatoryWomen = gioco.mandatory_women || 0;
+    const mandatoryWomen = gioco.mandatory_women !== null && gioco.mandatory_women !== undefined
+        ? gioco.mandatory_women
+        : (gioco.player_positions?.filter(p => p.required_gender === 'F').length || 0);
     const minAge = gioco.min_age || 0;
     const maxAge = gioco.max_age || 99;
     const bonusPerPlayer = gioco.bonus_per_player || 0;
