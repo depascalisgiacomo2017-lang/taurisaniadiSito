@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pannello Amministratore - Taurisaniadi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background-image: url('/assets/sitoBack-C9WNjLjY.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 20px;
+            color: #2c1810;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-image: url('/assets/sfondoMobile-BEQQgKeT.png');
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, rgba(244, 232, 208, 0.98), rgba(235, 218, 186, 0.98));
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 8px #d4a574,
+                inset 0 0 0 12px #8b6538,
+                inset 0 0 0 14px #d4a574;
+            border: 4px solid #8b6538;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #8b6538;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c1810;
+            font-size: 2em;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        h1::before {
+            content: '👑 ';
+            margin-right: 10px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: linear-gradient(180deg, #c62828 0%, #b71c1c 100%);
+            color: #f4e8d0;
+            border: 2px solid #8b0000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #b71c1c 0%, #8b0000 100%);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: linear-gradient(180deg, #e8d4b0 0%, #c9a876 100%);
+            border: 3px solid #8b6538;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2c1810;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
+        }
+
+        .tab.active {
+            background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%);
+            color: #f4e8d0;
+        }
+
+        .section {
+            display: none;
+            background: rgba(255, 253, 248, 0.9);
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #d4a574;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c1810;
+            font-family: 'Cinzel', serif;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #8b6538;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'Playfair Display', serif;
+            background: #fffdf8;
+            color: #2c1810;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #d4a574;
+            box-shadow: 0 0 5px rgba(212, 165, 116, 0.5);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%);
+            color: #f4e8d0;
+            border: 2px solid #5d4037;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            margin-right: 10px;
+            margin-top: 10px;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(180deg, #6d4c2a 0%, #5d4037 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(180deg, #c62828 0%, #b71c1c 100%);
+            border: 2px solid #8b0000;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(180deg, #b71c1c 0%, #8b0000 100%);
+        }
+
+        .list-item {
+            background: #fffdf8;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 5px solid #8b6538;
+            border: 2px solid #d4a574;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-item h3 {
+            color: #2c1810;
+            margin-bottom: 5px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #4caf50;
+            color: white;
+            display: block;
+        }
+
+        .message.error {
+            background: #f44336;
+            color: white;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            h1 { font-size: 1.5em; }
+            header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .tabs { flex-direction: column; }
+            .tab { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Pannello Amministratore</h1>
+        <button class="logout-btn" onclick="logout()">Esci</button>
+    </header>
+
+    <div id="message" class="message"></div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showSection('rioni')">🏛️ Rioni</button>
+        <button class="tab" onclick="showSection('giochi')">⚔️ Giochi</button>
+        <button class="tab" onclick="showSection('highlights')">🏆 Momenti Salienti</button>
+        <button class="tab" onclick="showSection('config')">⚙️ Configurazioni</button>
+    </div>
+
+    <div id="rioni" class="section active">
+        <h2>Gestione Rioni</h2>
+        <div class="form-group">
+            <label>Nome Rione</label>
+            <input type="text" id="rione-nome" placeholder="Es: Rione Centro">
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="rione-username" placeholder="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" id="rione-password" placeholder="password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Colore</label>
+            <input type="color" id="rione-color" value="#FF5722">
+        </div>
+        <button class="btn" onclick="addRione()">Aggiungi Rione</button>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Rioni Esistenti</h3>
+        <div id="rioni-list"></div>
+    </div>
+
+    <div id="giochi" class="section">
+        <h2>Gestione Giochi</h2>
+        <div class="form-group">
+            <label>Nome Gioco</label>
+            <input type="text" id="gioco-nome" placeholder="Es: Corsa dei Sacchi">
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Luogo</label>
+                <input type="text" id="gioco-luogo" placeholder="Es: Piazza Centrale">
+            </div>
+            <div class="form-group">
+                <label>Data</label>
+                <input type="date" id="gioco-data">
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Orario Inizio</label>
+                <input type="time" id="gioco-inizio">
+            </div>
+            <div class="form-group">
+                <label>Orario Fine</label>
+                <input type="time" id="gioco-fine">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Descrizione Tecnica</label>
+            <textarea id="gioco-desc-tecnica" placeholder="Regole e dettagli tecnici"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Descrizione Spettatori</label>
+            <textarea id="gioco-desc-spettatori" placeholder="Descrizione per il pubblico"></textarea>
+        </div>
+        <button class="btn" onclick="addGioco()">Aggiungi Gioco</button>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Giochi Esistenti</h3>
+        <div id="giochi-list"></div>
+    </div>
+
+    <div id="highlights" class="section">
+        <h2>Momenti Salienti</h2>
+        <div class="form-group">
+            <label>Titolo</label>
+            <input type="text" id="highlight-titolo" placeholder="Titolo del momento">
+        </div>
+        <div class="form-group">
+            <label>Descrizione</label>
+            <textarea id="highlight-desc" placeholder="Descrizione"></textarea>
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>URL Media</label>
+                <input type="text" id="highlight-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Tipo</label>
+                <select id="highlight-tipo">
+                    <option value="photo">Foto</option>
+                    <option value="video">Video</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Data Evento</label>
+            <input type="date" id="highlight-data">
+        </div>
+        <button class="btn" onclick="addHighlight()">Aggiungi Momento</button>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Momenti Salienti</h3>
+        <div id="highlights-list"></div>
+    </div>
+
+    <div id="config" class="section">
+        <h2>Configurazioni Globali</h2>
+        <div class="form-group">
+            <label>Limite Bonus</label>
+            <input type="number" id="config-bonus" value="3">
+        </div>
+        <div class="form-group">
+            <label>Link WhatsApp</label>
+            <input type="text" id="config-whatsapp" placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label>Link Discord</label>
+            <input type="text" id="config-discord" placeholder="https://...">
+        </div>
+        <button class="btn" onclick="saveConfig()">Salva Configurazioni</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
+<script src="auth.js"></script>
+<script src="admin_functions.js"></script>
+<script>
+    checkAuth('admin');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadData();
+        loadRioniList();
+        loadGiochiList();
+        loadHighlightsList();
+        loadConfigForm();
+    });
+
+    function showSection(sectionName) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+        document.getElementById(sectionName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function showMessage(text, type = 'success') {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.className = `message ${type}`;
+        setTimeout(() => {
+            msg.className = 'message';
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>

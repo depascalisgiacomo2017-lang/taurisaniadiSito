@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taurisaniadi 2026 - Accesso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-image: url('/assets/sitoBack-C9WNjLjY.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-image: url('/assets/sfondoMobile-BEQQgKeT.png');
+            }
+        }
+
+        .landing-container {
+            background-color: #f4e8d0;
+            background-image:
+                linear-gradient(to bottom, rgba(244, 232, 208, 0.95), rgba(235, 218, 186, 0.95));
+            max-width: 700px;
+            width: 90%;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 8px #d4a574,
+                inset 0 0 0 12px #8b6538,
+                inset 0 0 0 14px #d4a574;
+            border: 4px solid #8b6538;
+            position: relative;
+        }
+
+        .landing-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid rgba(139, 101, 56, 0.3);
+            pointer-events: none;
+        }
+
+        h1.title {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 800;
+            color: #2c1810;
+            margin: 0 0 10px 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            color: #5d4037;
+            margin-bottom: 40px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-main {
+            font-size: 1.4em;
+            padding: 20px 30px;
+            margin: 30px 0;
+            background: linear-gradient(180deg, #e8d4b0 0%, #c9a876 100%);
+            color: #2c1810;
+            border: 3px solid #8b6538;
+            border-radius: 8px;
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 8px,
+                rgba(139, 101, 56, 0.2) 8px,
+                rgba(139, 101, 56, 0.2) 10px
+            );
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .secondary-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            font-size: 1em;
+            padding: 15px 25px;
+            background: linear-gradient(180deg, #d9c4a0 0%, #b89968 100%);
+            color: #2c1810;
+            border: 2px solid #8b6538;
+            border-radius: 6px;
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-overlay {
+            display: none;
+            background: rgba(244, 232, 208, 0.98);
+            border: 3px solid #8b6538;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay h3 {
+            font-family: 'Cinzel', serif;
+            color: #2c1810;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #8b6538;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #8b6538;
+            border-radius: 4px;
+            font-family: 'Playfair Display', serif;
+            background: #fffdf8;
+            color: #2c1810;
+            font-size: 1em;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #d4a574;
+            box-shadow: 0 0 5px rgba(212, 165, 116, 0.5);
+        }
+
+        .error-msg {
+            color: #c62828;
+            font-size: 0.9em;
+            display: none;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .btn-login {
+            background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%);
+            color: #f4e8d0;
+            border: 2px solid #5d4037;
+            padding: 12px;
+            font-size: 1em;
+            margin-top: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(180deg, #6d4c2a 0%, #5d4037 100%);
+        }
+
+        @media (max-width: 768px) {
+            .landing-container {
+                width: 95%;
+                padding: 40px 25px;
+            }
+
+            h1.title {
+                font-size: 2em;
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .btn-main {
+                font-size: 1.1em;
+                padding: 18px 25px;
+            }
+
+            .btn-secondary {
+                font-size: 0.9em;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1.title {
+                font-size: 1.6em;
+            }
+
+            .btn-main {
+                font-size: 1em;
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="landing-container">
+    <h1 class="title">TAURISANIADI</h1>
+    <p class="subtitle">Il Portale dei Rioni</p>
+
+    <div class="main-actions">
+        <button class="btn-main" onclick="window.location.href='spectator.html'">
+            Entra da Spettatore
+        </button>
+    </div>
+
+    <div class="secondary-actions">
+        <button class="btn-secondary" onclick="showAdminLogin()">
+            Entra da Amministratore
+        </button>
+        <button class="btn-secondary" onclick="showCaporioneLogin()">
+            Entra da Capo-Rione
+        </button>
+    </div>
+
+    <div id="admin-login-modal" class="modal-overlay">
+        <h3>Login Amministratore</h3>
+        <input type="text" id="admin-user" placeholder="Nome Utente">
+        <input type="password" id="admin-pass" placeholder="Password">
+        <div id="login-error" class="error-msg">Credenziali non valide!</div>
+        <button class="btn-login" onclick="attemptAdminLogin()">Accedi</button>
+    </div>
+
+    <div id="caporione-login-modal" class="modal-overlay">
+        <h3>Accesso Capo-Rione</h3>
+        <input type="text" id="caporione-user" placeholder="Nome Utente">
+        <input type="password" id="caporione-pass" placeholder="Password">
+        <div id="login-error-capo" class="error-msg">Credenziali non valide!</div>
+        <button class="btn-login" onclick="attemptCaporioneLogin()">Accedi Area Rione</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>
