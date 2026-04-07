@@ -1,16 +1,14 @@
 {
   "name": "taurisaniadi-2026",
   "version": "1.0.0",
-  "description": "Piattaforma gestionale Taurisaniadi 2026 con Supabase",
+  "description": "Piattaforma gestionale Taurisaniadi 2026 - HTML/CSS/JS",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vite": "^5.0.0"
   }

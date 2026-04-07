@@ -317,12 +317,10 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase_client.js"></script>
-<script src="auth.js"></script>
-<script src="caporione_functions.js"></script>
 <script>
-    checkAuth('caporione');
+    if (localStorage.getItem('userRole') !== 'caporione') {
+        window.location.href = 'index.html';
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
         await loadData();
