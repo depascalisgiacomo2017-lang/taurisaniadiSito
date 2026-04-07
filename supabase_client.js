@@ -1,9 +1,9 @@
 const SUPABASE_URL = 'https://zhairixyldlctaiuwqto.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoYWlyaXh5bGRsY3RhaXV3cXRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTg2MzAsImV4cCI6MjA5MTEzNDYzMH0.Q2-UGHxggbvDUIbDQ7vJtqaL2Z_QjRr25LyigYr48JI';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-window.supabaseClient = supabase;
+window.supabaseClient = supabaseClient;
 
 window.appState = {
     rioni: [],
@@ -19,28 +19,28 @@ window.appState = {
 
 window.loadData = async function() {
     try {
-        const { data: rioniData } = await supabase.from('rioni').select('*');
+        const { data: rioniData } = await supabaseClient.from('rioni').select('*');
         if (rioniData) window.appState.rioni = rioniData;
 
-        const { data: atletiData } = await supabase.from('atleti').select('*');
+        const { data: atletiData } = await supabaseClient.from('atleti').select('*');
         if (atletiData) window.appState.atleti = atletiData;
 
-        const { data: giochiData } = await supabase.from('giochi').select('*');
+        const { data: giochiData } = await supabaseClient.from('giochi').select('*');
         if (giochiData) window.appState.giochi = giochiData;
 
-        const { data: squadreData } = await supabase.from('squadre').select('*');
+        const { data: squadreData } = await supabaseClient.from('squadre').select('*');
         if (squadreData) window.appState.squadre = squadreData;
 
-        const { data: messaggiData } = await supabase.from('messaggi').select('*').order('created_at', { ascending: true });
+        const { data: messaggiData } = await supabaseClient.from('messaggi').select('*').order('created_at', { ascending: true });
         if (messaggiData) window.appState.messaggi = messaggiData;
 
-        const { data: highlightsData } = await supabase.from('momenti_salienti').select('*').order('created_at', { ascending: false });
+        const { data: highlightsData } = await supabaseClient.from('momenti_salienti').select('*').order('created_at', { ascending: false });
         if (highlightsData) window.appState.momenti_salienti = highlightsData;
 
-        const { data: fasceData } = await supabase.from('fasce_eta').select('*').order('min_eta', { ascending: true });
+        const { data: fasceData } = await supabaseClient.from('fasce_eta').select('*').order('min_eta', { ascending: true });
         if (fasceData) window.appState.fasce_eta = fasceData;
 
-        const { data: configData } = await supabase.from('impostazioni').select('*');
+        const { data: configData } = await supabaseClient.from('impostazioni').select('*');
         if (configData) {
             window.appState.config = {};
             configData.forEach(item => {
@@ -55,7 +55,7 @@ window.loadData = async function() {
 };
 
 function setupRealtimeSubscription() {
-    const channel = supabase.channel('db-changes')
+    const channel = supabaseClient.channel('db-changes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'rioni' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'atleti' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'giochi' }, () => loadData())

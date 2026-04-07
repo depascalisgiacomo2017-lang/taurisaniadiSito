@@ -376,6 +376,11 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase_client.js"></script>
+<script src="auth.js"></script>
+<script src="admin_functions.js"></script>
+<script src="admin_extended.js"></script>
 <script>
     if (localStorage.getItem('userRole') !== 'admin') {
         window.location.href = 'index.html';
@@ -383,6 +388,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         await loadData();
+        setupRealtimeSubscription();
         loadRioniList();
         loadGiochiList();
         loadHighlightsList();
