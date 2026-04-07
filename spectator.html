@@ -43,14 +43,44 @@
             border: 4px solid #8b6538;
         }
 
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
         h1 {
             font-family: 'Cinzel', serif;
             font-size: 2.5em;
             color: #2c1810;
-            margin-bottom: 10px;
+            margin: 0;
             letter-spacing: 4px;
             text-transform: uppercase;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
         }
 
         header p {
@@ -223,7 +253,10 @@
 
 <div class="container">
     <header>
-        <h1>TAURISANIADI 2026</h1>
+        <div class="header-title">
+            <img src="immagini/logotauro.png" alt="Logo Taurisaniadi" class="header-logo">
+            <h1>TAURISANIADI 2026</h1>
+        </div>
         <p>Vista Spettatore</p>
     </header>
 
