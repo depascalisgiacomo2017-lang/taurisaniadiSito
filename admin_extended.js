@@ -187,10 +187,12 @@ function loadChatMessages() {
             <div style="font-weight: bold; color: #2c1810; margin-bottom: 5px;">
                 ${msg.sender_name} - ${date.toLocaleString('it-IT')}
             </div>
-            <div style="color: #5d4037;">${msg.text}</div>
+            <div style="color: #5d4037;">${msg.text || ''}</div>
             ${msg.file_url ? `<div style="margin-top: 8px;">
-                <a href="${msg.file_url}" target="_blank" style="color: #1976d2; text-decoration: none;">
-                    📎 ${msg.file_name || 'File allegato'}
+                <a href="${msg.file_url}" target="_blank" download="${msg.file_name || 'file'}"
+                   style="color: #1976d2; text-decoration: none; display: inline-block; padding: 5px 10px;
+                          background: #e3f2fd; border-radius: 5px; border: 1px solid #2196f3;">
+                    📎 ${msg.file_name || 'File allegato'} - Scarica
                 </a>
             </div>` : ''}
         `;
@@ -455,6 +457,10 @@ async function addGioco() {
     const descSpettatori = document.getElementById('gioco-desc-spettatori').value;
     const liveUrl = document.getElementById('gioco-live-url').value;
     const minDonne = parseInt(document.getElementById('gioco-min-donne').value) || 0;
+    const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 1;
+    const minAge = parseInt(document.getElementById('gioco-min-age').value) || 0;
+    const maxAge = parseInt(document.getElementById('gioco-max-age').value) || 99;
+    const bonusPerPlayer = parseInt(document.getElementById('gioco-bonus-per-player').value) || 0;
     const bracketFile = document.getElementById('gioco-bracket-file').files[0];
 
     if (!nome) {
@@ -487,6 +493,10 @@ async function addGioco() {
         live_stream_url: liveUrl || null,
         bracket_image_url: bracketUrl,
         mandatory_women: minDonne,
+        total_players: totalPlayers,
+        min_age: minAge,
+        max_age: maxAge,
+        bonus_per_player: bonusPerPlayer,
         slots: [],
         restricted_rioni: [],
         in_progress: false
@@ -513,6 +523,10 @@ async function addGioco() {
     document.getElementById('gioco-live-url').value = '';
     document.getElementById('gioco-bracket-file').value = '';
     document.getElementById('gioco-min-donne').value = '2';
+    document.getElementById('gioco-total-players').value = '5';
+    document.getElementById('gioco-min-age').value = '18';
+    document.getElementById('gioco-max-age').value = '35';
+    document.getElementById('gioco-bonus-per-player').value = '0';
 
     await loadData();
     loadGiochiList();

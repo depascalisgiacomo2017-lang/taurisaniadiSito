@@ -125,10 +125,88 @@
 - Compatibilità multi-utente con aggiornamenti istantanei
 - Nessun dato hardcoded (tutto su database)
 
+---
+
+## Aggiornamento 07 Aprile 2026 - Gestione Giochi Avanzata e Chat Migliorata
+
+### Nuove Funzionalità
+
+#### 1. Gestione Avanzata Giochi
+- **Numero Totale Giocatori**: Configurabile per ogni gioco
+- **Fascia Età Gioco**: Età minima e massima consentita
+- **Sistema Bonus**: Punti bonus utilizzati per giocatori fuori fascia età
+- Validazione automatica rispetto ai requisiti
+
+#### 2. Chat Migliorata con File
+- **Upload File**: Supporto completo per allegati (immagini, PDF, documenti Office)
+- **Download File**: Pulsante dedicato per scaricare gli allegati
+- **Storage Supabase**: File salvati su Supabase Storage
+- Chat bidirezionale funzionante tra admin e capi-rione
+
+#### 3. Gestione Atleti Completa
+- Funzione `addAtleta` implementata per i capi-rione
+- Visualizzazione lista atleti per rione
+- Informazioni dettagliate (età, sesso, note)
+
+#### 4. Visualizzazione Formazioni
+- Lista giochi disponibili per ogni rione
+- Visualizzazione requisiti (numero giocatori, fasce età)
+- Indicatore squadra registrata/non registrata
+- Informazioni bonus per giocatori fuori fascia
+
+### Modifiche Database
+
+#### Tabella `giochi` - Nuove Colonne
+- `total_players` (integer): Numero totale giocatori richiesti
+- `min_age` (integer): Età minima consentita senza bonus
+- `max_age` (integer): Età massima consentita senza bonus
+- `bonus_per_player` (integer): Punti bonus per giocatore fuori fascia
+
+#### Tabella `messaggi` - Già Esistente
+- Supporto completo per file (file_url, file_name)
+- Compatibile con chat admin e capi-rione
+
+### File Modificati
+
+#### JavaScript
+- `admin_extended.js`: Aggiornata creazione giochi con nuovi campi
+- `caporione_functions.js`: Aggiunte funzioni complete
+  - `uploadFile`: Caricamento file su storage
+  - `sendMessage`: Invio messaggi con allegati
+  - `loadChatMessages`: Visualizzazione messaggi
+  - `loadAtletiList`: Lista atleti rione
+  - `loadFormazioniList`: Lista formazioni disponibili
+  - `addAtleta`: Aggiunta nuovi atleti
+
+#### HTML
+- `admin_panel.html`: Form creazione giochi con campi età e bonus
+- `caporione.html`: Aggiunto campo upload file in chat
+
+### Storage Configuration
+
+#### Bucket Configurato
+- Nome: `taurisaniadi-files`
+- Cartelle:
+  - `chat-files/`: File chat tra admin e capi-rione
+  - `game-brackets/`: Immagini tabelloni giochi
+- Accesso pubblico per download
+
+### Migrazioni Database
+- `add_game_players_and_age_constraints.sql`: Nuovi campi giochi
+- `setup_storage_buckets.sql`: Configurazione storage
+
+### Funzionalità di Validazione
+
+#### Sistema Bonus Età
+- Quando un giocatore è fuori dalla fascia età del gioco
+- Vengono consumati punti bonus configurati
+- Esempio: Se bonus_per_player = 10, ogni giocatore fuori fascia costa 10 punti
+- I capi-rione vedono chiaramente i requisiti nelle formazioni
+
 ### Prossimi Sviluppi Suggeriti
 
-1. Upload diretto file/immagini su Supabase Storage
-2. Sistema di notifiche push
-3. Cronologia modifiche
-4. Backup automatici
+1. Interfaccia per registrare squadre da parte capi-rione
+2. Validazione automatica età atleti rispetto ai giochi
+3. Calcolo automatico bonus consumati
+4. Sistema di notifiche push
 5. Dashboard analytics per amministratore

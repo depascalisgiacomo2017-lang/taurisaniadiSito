@@ -332,9 +332,32 @@
             <input type="file" id="gioco-bracket-file" accept="image/*">
             <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Carica un'immagine del tabellone</p>
         </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Numero Minimo Donne</label>
+                <input type="number" id="gioco-min-donne" value="2" min="0">
+            </div>
+            <div class="form-group">
+                <label>Numero Totale Giocatori</label>
+                <input type="number" id="gioco-total-players" value="5" min="1">
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Età Minima</label>
+                <input type="number" id="gioco-min-age" value="18" min="0">
+            </div>
+            <div class="form-group">
+                <label>Età Massima</label>
+                <input type="number" id="gioco-max-age" value="35" min="0">
+            </div>
+        </div>
         <div class="form-group">
-            <label>Numero Minimo Donne</label>
-            <input type="number" id="gioco-min-donne" value="2" min="0">
+            <label>Bonus per Giocatore Fuori Fascia</label>
+            <input type="number" id="gioco-bonus-per-player" value="0" min="0">
+            <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
+                Punti bonus consumati per ogni giocatore fuori dalla fascia di età (0 = nessun bonus utilizzato)
+            </p>
         </div>
         <button class="btn" onclick="addGioco()">Aggiungi Gioco</button>
 
