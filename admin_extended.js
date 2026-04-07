@@ -77,27 +77,86 @@ async function updateRioneCredentialsUI(rioneId) {
     }
 }
 
+async function uploadFile(file, bucket) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', bucket);
+
+    const apiUrl = `${window.SUPABASE_URL}/functions/v1/upload-file`;
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`,
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+            throw new Error(data.error || 'Upload failed');
+        }
+
+        return { success: true, url: data.url, fileName: data.fileName };
+    } catch (error) {
+        console.error('Upload error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 async function sendChatMessage() {
     const text = document.getElementById('chat-text').value;
-    const fileUrl = document.getElementById('chat-file-url').value || null;
-    const fileName = document.getElementById('chat-file-name').value || null;
+    const fileInput = document.getElementById('chat-file');
+    const file = fileInput.files[0];
 
-    if (!text) {
-        showMessage('Inserisci un messaggio', true);
+    if (!text && !file) {
+        showMessage('Inserisci un messaggio o un file', true);
         return;
     }
 
-    const result = await sendMessageToRione(text, fileUrl, fileName);
+    let fileUrl = null;
+    let fileName = null;
+
+    if (file) {
+        showMessage('Caricamento file in corso...');
+        const uploadResult = await uploadFile(file, 'chat-files');
+
+        if (!uploadResult.success) {
+            showMessage('Errore caricamento file: ' + uploadResult.error, true);
+            return;
+        }
+
+        fileUrl = uploadResult.url;
+        fileName = uploadResult.fileName;
+    }
+
+    const result = await sendMessageToRione(text || '', fileUrl, fileName);
     if (result.success) {
         showMessage('Messaggio inviato con successo');
         document.getElementById('chat-text').value = '';
-        document.getElementById('chat-file-url').value = '';
-        document.getElementById('chat-file-name').value = '';
+        fileInput.value = '';
         await loadData();
         loadChatMessages();
     } else {
         showMessage('Errore invio messaggio', true);
     }
+}
+
+async function forceDataRefresh() {
+    showMessage('Aggiornamento dati in corso...');
+    await loadData();
+
+    loadRioniList();
+    loadGiochiList();
+    loadHighlightsList();
+    loadConfigForm();
+    loadRioniCredentials();
+    loadFasceList();
+    loadChatMessages();
+
+    showMessage('Dati aggiornati con successo');
 }
 
 function loadChatMessages() {
@@ -347,12 +406,208 @@ async function deleteGameUI(gameId) {
     }
 }
 
+async function addRione() {
+    const nome = document.getElementById('rione-nome').value;
+    const username = document.getElementById('rione-username').value;
+    const password = document.getElementById('rione-password').value;
+    const colore = document.getElementById('rione-color').value;
+
+    if (!nome || !username || !password) {
+        showMessage('Compila tutti i campi', true);
+        return;
+    }
+
+    const rioneData = {
+        nome: nome,
+        username: username,
+        password: password,
+        colore: colore,
+        punteggio: 0
+    };
+
+    const { data, error } = await window.supabaseClient
+        .from('rioni')
+        .insert(rioneData);
+
+    if (error) {
+        showMessage('Errore creazione rione: ' + error.message, true);
+        return;
+    }
+
+    showMessage('Rione creato con successo');
+
+    document.getElementById('rione-nome').value = '';
+    document.getElementById('rione-username').value = '';
+    document.getElementById('rione-password').value = '';
+    document.getElementById('rione-color').value = '#FF5722';
+
+    await loadData();
+    loadRioniList();
+}
+
+async function addGioco() {
+    const nome = document.getElementById('gioco-nome').value;
+    const luogo = document.getElementById('gioco-luogo').value;
+    const data = document.getElementById('gioco-data').value;
+    const oraInizio = document.getElementById('gioco-inizio').value;
+    const oraFine = document.getElementById('gioco-fine').value;
+    const descTecnica = document.getElementById('gioco-desc-tecnica').value;
+    const descSpettatori = document.getElementById('gioco-desc-spettatori').value;
+    const liveUrl = document.getElementById('gioco-live-url').value;
+    const minDonne = parseInt(document.getElementById('gioco-min-donne').value) || 0;
+    const bracketFile = document.getElementById('gioco-bracket-file').files[0];
+
+    if (!nome) {
+        showMessage('Inserisci il nome del gioco', true);
+        return;
+    }
+
+    let bracketUrl = null;
+
+    if (bracketFile) {
+        showMessage('Caricamento tabellone in corso...');
+        const uploadResult = await uploadFile(bracketFile, 'game-brackets');
+
+        if (!uploadResult.success) {
+            showMessage('Errore caricamento tabellone: ' + uploadResult.error, true);
+            return;
+        }
+
+        bracketUrl = uploadResult.url;
+    }
+
+    const gameData = {
+        name: nome,
+        location: luogo || null,
+        date: data || null,
+        time_start: oraInizio || null,
+        time_end: oraFine || null,
+        description: descTecnica || null,
+        desc_spectator: descSpettatori || null,
+        live_stream_url: liveUrl || null,
+        bracket_image_url: bracketUrl,
+        mandatory_women: minDonne,
+        slots: [],
+        restricted_rioni: [],
+        in_progress: false
+    };
+
+    const { data, error } = await window.supabaseClient
+        .from('giochi')
+        .insert(gameData);
+
+    if (error) {
+        showMessage('Errore creazione gioco: ' + error.message, true);
+        return;
+    }
+
+    showMessage('Gioco creato con successo');
+
+    document.getElementById('gioco-nome').value = '';
+    document.getElementById('gioco-luogo').value = '';
+    document.getElementById('gioco-data').value = '';
+    document.getElementById('gioco-inizio').value = '';
+    document.getElementById('gioco-fine').value = '';
+    document.getElementById('gioco-desc-tecnica').value = '';
+    document.getElementById('gioco-desc-spettatori').value = '';
+    document.getElementById('gioco-live-url').value = '';
+    document.getElementById('gioco-bracket-file').value = '';
+    document.getElementById('gioco-min-donne').value = '2';
+
+    await loadData();
+    loadGiochiList();
+}
+
+function loadRioniList() {
+    const container = document.getElementById('rioni-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    window.appState.rioni.forEach(rione => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <div>
+                <h3 style="color: ${rione.colore};">${rione.nome}</h3>
+                <p style="color: #5d4037; margin-top: 5px;">
+                    Punteggio: ${rione.punteggio || 0} |
+                    Username: ${rione.username}
+                </p>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function loadHighlightsList() {
+    const container = document.getElementById('highlights-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    window.appState.momenti_salienti.forEach(highlight => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        const date = new Date(highlight.created_at).toLocaleDateString('it-IT');
+        item.innerHTML = `
+            <div>
+                <h3>${highlight.titolo}</h3>
+                <p style="color: #5d4037; margin-top: 5px;">${date}</p>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function loadConfigForm() {
+    const bonusLimit = window.appState.config['bonus_limit'] || 3;
+    const whatsapp = window.appState.config['whatsapp_link'] || '';
+    const discord = window.appState.config['discord_link'] || '';
+
+    const bonusInput = document.getElementById('config-bonus');
+    const whatsappInput = document.getElementById('config-whatsapp');
+    const discordInput = document.getElementById('config-discord');
+
+    if (bonusInput) bonusInput.value = bonusLimit;
+    if (whatsappInput) whatsappInput.value = whatsapp;
+    if (discordInput) discordInput.value = discord;
+}
+
+async function saveConfig() {
+    const bonusLimit = document.getElementById('config-bonus').value;
+    const whatsapp = document.getElementById('config-whatsapp').value;
+    const discord = document.getElementById('config-discord').value;
+
+    const updates = [
+        { key: 'bonus_limit', value: bonusLimit },
+        { key: 'whatsapp_link', value: whatsapp },
+        { key: 'discord_link', value: discord }
+    ];
+
+    for (const update of updates) {
+        const { error } = await window.supabaseClient
+            .from('impostazioni')
+            .upsert(update);
+
+        if (error) {
+            showMessage('Errore salvataggio configurazioni: ' + error.message, true);
+            return;
+        }
+    }
+
+    showMessage('Configurazioni salvate con successo');
+    await loadData();
+}
+
 window.showMessage = showMessage;
 window.changeAdminCredentials = changeAdminCredentials;
 window.loadRioniCredentials = loadRioniCredentials;
 window.updateRioneCredentialsUI = updateRioneCredentialsUI;
+window.uploadFile = uploadFile;
 window.sendChatMessage = sendChatMessage;
 window.loadChatMessages = loadChatMessages;
+window.forceDataRefresh = forceDataRefresh;
 window.addNewFasciaEta = addNewFasciaEta;
 window.loadFasceList = loadFasceList;
 window.deleteFasciaEtaUI = deleteFasciaEtaUI;
@@ -360,3 +615,9 @@ window.loadAthleteStats = loadAthleteStats;
 window.loadGiochiList = loadGiochiList;
 window.editGame = editGame;
 window.deleteGameUI = deleteGameUI;
+window.addRione = addRione;
+window.addGioco = addGioco;
+window.loadRioniList = loadRioniList;
+window.loadHighlightsList = loadHighlightsList;
+window.loadConfigForm = loadConfigForm;
+window.saveConfig = saveConfig;

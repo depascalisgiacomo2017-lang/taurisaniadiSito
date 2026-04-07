@@ -328,8 +328,9 @@
             <input type="text" id="gioco-live-url" placeholder="https://youtube.com/...">
         </div>
         <div class="form-group">
-            <label>URL Tabellone Scontri (opzionale)</label>
-            <input type="text" id="gioco-bracket-url" placeholder="https://...immagine.png">
+            <label>Tabellone Scontri (opzionale)</label>
+            <input type="file" id="gioco-bracket-file" accept="image/*">
+            <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Carica un'immagine del tabellone</p>
         </div>
         <div class="form-group">
             <label>Numero Minimo Donne</label>
@@ -406,12 +407,9 @@
             <textarea id="chat-text" placeholder="Scrivi un messaggio ai capi-rione..."></textarea>
         </div>
         <div class="form-group">
-            <label>URL File (opzionale)</label>
-            <input type="text" id="chat-file-url" placeholder="https://...">
-        </div>
-        <div class="form-group">
-            <label>Nome File (opzionale)</label>
-            <input type="text" id="chat-file-name" placeholder="documento.pdf">
+            <label>Allega File (opzionale)</label>
+            <input type="file" id="chat-file" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx">
+            <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Formati supportati: immagini, PDF, documenti Office</p>
         </div>
         <button class="btn" onclick="sendChatMessage()">Invia Messaggio</button>
     </div>
@@ -450,10 +448,15 @@
 
     <div id="config" class="section">
         <h2>Configurazioni Globali</h2>
-        <div class="form-group">
-            <label>Numero Minimo Donne per Gioco</label>
-            <input type="number" id="config-min-donne" value="2" min="0">
+
+        <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #4caf50;">
+            <h3 style="margin-bottom: 10px; color: #2c1810;">Aggiornamento Dati</h3>
+            <p style="color: #5d4037; margin-bottom: 15px;">Ricarica tutti i dati dal server per tutti gli utenti connessi</p>
+            <button class="btn" onclick="forceDataRefresh()" style="background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); border-color: #2e7d32;">
+                🔄 Aggiorna Tutti i Dati
+            </button>
         </div>
+
         <div class="form-group">
             <label>Limite Bonus</label>
             <input type="number" id="config-bonus" value="3">
