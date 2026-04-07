@@ -322,14 +322,21 @@
 <script src="auth.js"></script>
 <script src="caporione_functions.js"></script>
 <script>
-    checkAuth('caporione');
+    if (localStorage.getItem('userRole') !== 'caporione') {
+        window.location.href = 'index.html';
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
         await loadData();
+        setupRealtimeSubscription();
 
-        const rioneName = sessionStorage.getItem('rioneName');
-        document.getElementById('rione-title').textContent = `Area ${rioneName}`;
-        document.getElementById('rione-subtitle').textContent = `Gestione ${rioneName}`;
+        const rioneId = localStorage.getItem('rioneId');
+        const rione = window.appState.rioni.find(r => r.id === rioneId);
+
+        if (rione) {
+            document.getElementById('rione-title').textContent = `Area ${rione.nome}`;
+            document.getElementById('rione-subtitle').textContent = `Gestione ${rione.nome}`;
+        }
 
         loadAtletiList();
         loadFormazioniList();

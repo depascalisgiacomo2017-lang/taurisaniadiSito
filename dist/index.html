@@ -303,6 +303,45 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase_client.js"></script>
 <script src="auth.js"></script>
+<script>
+    function showAdminLogin() {
+        const modal = document.getElementById('admin-login-modal');
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('caporione-login-modal').style.display = 'none';
+    }
+
+    function showCaporioneLogin() {
+        const modal = document.getElementById('caporione-login-modal');
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('admin-login-modal').style.display = 'none';
+    }
+
+    async function attemptAdminLogin() {
+        const username = document.getElementById('admin-user').value;
+        const password = document.getElementById('admin-pass').value;
+
+        const result = await loginAdmin(username, password);
+
+        if (result.success) {
+            window.location.href = 'admin_panel.html';
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    }
+
+    async function attemptCaporioneLogin() {
+        const username = document.getElementById('caporione-user').value;
+        const password = document.getElementById('caporione-pass').value;
+
+        const result = await loginCaporione(username, password);
+
+        if (result.success) {
+            window.location.href = 'caporione.html';
+        } else {
+            document.getElementById('login-error-capo').style.display = 'block';
+        }
+    }
+</script>
 
 </body>
 </html>

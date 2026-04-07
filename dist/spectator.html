@@ -265,6 +265,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase_client.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadData();
+        setupRealtimeSubscription();
+    });
+
     function showTab(tabName) {
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
