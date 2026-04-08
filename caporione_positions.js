@@ -18,6 +18,13 @@ function loadFormazioniListWithPositions() {
         const positions = gioco.player_positions || [];
         const totalPlayers = gioco.total_players || positions.length || 5;
 
+        const mandatoryWomen = gioco.mandatory_women !== null ? gioco.mandatory_women :
+            (positions.filter(p => p.required_gender === 'F').length || 0);
+
+        const womenCount = players.filter(p => p.gender === 'F').length;
+        const outOfRangeCount = players.filter(p => p.out_of_range).length;
+        const bonusUsed = outOfRangeCount * (gioco.bonus_per_player || 0);
+
         return `
             <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #8b6538;">
                 <h3 style="margin-bottom: 15px;">${gioco.name}</h3>
@@ -26,9 +33,27 @@ function loadFormazioniListWithPositions() {
                     <p style="color: #5d4037; margin-bottom: 5px;">
                         <strong>Requisiti:</strong> ${totalPlayers} giocatori
                     </p>
-                    ${gioco.bonus_per_player > 0 ? `<p style="color: #d32f2f; font-size: 0.9em;">
-                        <strong>⚠ Bonus fuori fascia:</strong> ${gioco.bonus_per_player} punti/giocatore
-                    </p>` : ''}
+                    ${mandatoryWomen > 0 ? `
+                        <div style="display: flex; gap: 20px; margin-top: 10px; padding: 10px; background: ${womenCount >= mandatoryWomen ? '#e8f5e9' : '#ffebee'}; border-radius: 5px;">
+                            <div>
+                                <strong style="color: ${womenCount >= mandatoryWomen ? '#2e7d32' : '#d32f2f'};">
+                                    👩 Donne: ${womenCount}/${mandatoryWomen}
+                                </strong>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${gioco.bonus_per_player > 0 ? `
+                        <div style="display: flex; gap: 20px; margin-top: 10px; padding: 10px; background: ${bonusUsed > 0 ? '#fff3e0' : '#e8f5e9'}; border-radius: 5px;">
+                            <div>
+                                <strong style="color: ${bonusUsed > 0 ? '#e65100' : '#2e7d32'};">
+                                    ⚠ Bonus Utilizzati: ${bonusUsed} punti
+                                </strong>
+                                <span style="font-size: 0.85em; color: #666; margin-left: 5px;">
+                                    (${outOfRangeCount} giocatori × ${gioco.bonus_per_player} punti)
+                                </span>
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
 
                 <div id="formazione-${gioco.id}">

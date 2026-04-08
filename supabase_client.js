@@ -15,6 +15,7 @@ window.appState = {
     messaggi: [],
     momenti_salienti: [],
     fasce_eta: [],
+    classifica: null,
     config: {},
     currentUser: null
 };
@@ -42,6 +43,9 @@ window.loadData = async function() {
         const { data: fasceData } = await supabaseClient.from('fasce_eta').select('*').order('min_eta', { ascending: true });
         if (fasceData) window.appState.fasce_eta = fasceData;
 
+        const { data: classificaData } = await supabaseClient.from('classifica').select('*').maybeSingle();
+        if (classificaData) window.appState.classifica = classificaData;
+
         const { data: configData } = await supabaseClient.from('impostazioni').select('*');
         if (configData) {
             window.appState.config = {};
@@ -63,6 +67,7 @@ function setupRealtimeSubscription() {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'giochi' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'squadre' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'momenti_salienti' }, () => loadData())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'classifica' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'messaggi' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'fasce_eta' }, () => loadData())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'impostazioni' }, () => loadData())

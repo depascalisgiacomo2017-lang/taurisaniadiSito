@@ -259,7 +259,7 @@
         <button class="tab" onclick="showSection('credenziali')">🔐 Credenziali</button>
         <button class="tab" onclick="showSection('chat')">💬 Chat</button>
         <button class="tab" onclick="showSection('fasce-eta')">👥 Fasce Età</button>
-        <button class="tab" onclick="showSection('statistiche')">📊 Statistiche</button>
+        <button class="tab" onclick="showSection('classifica')">🏆 Classifica</button>
         <button class="tab" onclick="showSection('config')">⚙️ Configurazioni</button>
     </div>
 
@@ -328,6 +328,11 @@
             <input type="text" id="gioco-live-url" placeholder="https://youtube.com/...">
         </div>
         <div class="form-group">
+            <label>Link WhatsApp (opzionale)</label>
+            <input type="text" id="gioco-whatsapp" placeholder="https://chat.whatsapp.com/...">
+            <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Link al gruppo/canale WhatsApp del gioco</p>
+        </div>
+        <div class="form-group">
             <label>Tabellone Scontri (opzionale)</label>
             <input type="file" id="gioco-bracket-file" accept="image/*">
             <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Carica un'immagine del tabellone</p>
@@ -365,34 +370,40 @@
 
     <div id="highlights" class="section">
         <h2>Momenti Salienti</h2>
-        <div class="form-group">
-            <label>Titolo</label>
-            <input type="text" id="highlight-titolo" placeholder="Titolo del momento">
-        </div>
-        <div class="form-group">
-            <label>Descrizione</label>
-            <textarea id="highlight-desc" placeholder="Descrizione"></textarea>
-        </div>
-        <div class="grid-2">
-            <div class="form-group">
-                <label>URL Media</label>
-                <input type="text" id="highlight-url" placeholder="https://...">
-            </div>
-            <div class="form-group">
-                <label>Tipo</label>
-                <select id="highlight-tipo">
-                    <option value="photo">Foto</option>
-                    <option value="video">Video</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Data Evento</label>
-            <input type="date" id="highlight-data">
-        </div>
-        <button class="btn" onclick="addHighlight()">Aggiungi Momento</button>
 
-        <h3 style="margin-top: 30px; margin-bottom: 15px;">Momenti Salienti</h3>
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #8b6538;">
+            <h3 style="margin-bottom: 15px;">Aggiungi Nuovo Momento</h3>
+
+            <div class="form-group">
+                <label>Titolo</label>
+                <input type="text" id="momento-titolo" placeholder="Titolo del momento">
+            </div>
+
+            <div class="form-group">
+                <label>Descrizione</label>
+                <textarea id="momento-descrizione" placeholder="Descrizione del momento" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Carica Foto o Video</label>
+                <input type="file" id="momento-media" accept="image/*,video/*">
+                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
+                    Carica il file multimediale dal tuo dispositivo
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Link Esterno (opzionale)</label>
+                <input type="text" id="momento-link" placeholder="https://youtube.com/...">
+                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
+                    Link al video originale (se disponibile)
+                </p>
+            </div>
+
+            <button class="btn" onclick="addMomentoSaliente()">Aggiungi Momento Saliente</button>
+        </div>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Momenti Esistenti</h3>
         <div id="highlights-list"></div>
     </div>
 
@@ -460,10 +471,9 @@
         <div id="fasce-list"></div>
     </div>
 
-    <div id="statistiche" class="section">
-        <h2>Statistiche Atleti</h2>
-        <button class="btn" onclick="loadAthleteStats()" style="margin-bottom: 20px;">Aggiorna Statistiche</button>
-        <div id="stats-container"></div>
+    <div id="classifica" class="section">
+        <h2>Gestione Classifica</h2>
+        <div id="classifica-section"></div>
     </div>
 
     <div id="config" class="section">
@@ -496,8 +506,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/supabase_client.js"></script>
 <script type="module" src="/auth.js"></script>
+<script type="module" src="/date_utils.js"></script>
 <script type="module" src="/admin_functions.js"></script>
 <script type="module" src="/admin_extended.js"></script>
+<script type="module" src="/admin_edit_game.js"></script>
+<script type="module" src="/admin_classifica.js"></script>
 <script>
     if (localStorage.getItem('userRole') !== 'admin') {
         window.location.href = 'index.html';
@@ -508,7 +521,8 @@
         setupRealtimeSubscription();
         loadRioniList();
         loadGiochiList();
-        loadHighlightsList();
+        loadMomentiSalienti();
+        loadClassifica();
         loadConfigForm();
         loadRioniCredentials();
         loadFasceList();
@@ -524,7 +538,8 @@
         if (sectionName === 'chat') loadChatMessages();
         if (sectionName === 'credenziali') loadRioniCredentials();
         if (sectionName === 'fasce-eta') loadFasceList();
-        if (sectionName === 'statistiche') loadAthleteStats();
+        if (sectionName === 'highlights') loadMomentiSalienti();
+        if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
     }
 

@@ -264,6 +264,7 @@
         <button class="tab active" onclick="showTab('giochi')">⚔️ Giochi</button>
         <button class="tab" onclick="showTab('calendario')">📅 Calendario</button>
         <button class="tab" onclick="showTab('highlights')">🏆 Momenti Salienti</button>
+        <button class="tab" onclick="showTab('classifica')">📊 Classifica</button>
         <button class="tab" onclick="showTab('info')">ℹ️ Informazioni</button>
     </div>
 
@@ -282,6 +283,11 @@
         <div id="highlights-list"></div>
     </div>
 
+    <div id="classifica" class="content-section">
+        <h2>Classifica</h2>
+        <div id="classifica-container"></div>
+    </div>
+
     <div id="info" class="content-section">
         <h2>Informazioni Generali</h2>
         <div id="info-content">
@@ -297,9 +303,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/supabase_client.js"></script>
+<script type="module" src="/date_utils.js"></script>
+<script type="module" src="/spectator_extended.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        await loadData();
+        await loadSpectatorData();
         setupRealtimeSubscription();
     });
 

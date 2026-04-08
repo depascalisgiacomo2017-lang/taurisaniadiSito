@@ -351,7 +351,7 @@ function loadGiochiList() {
                     ${gioco.bracket_image_url ? '<br>🏆 Tabellone presente' : ''}
                 </p>
                 <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn" onclick="editGame('${gioco.id}')">Modifica</button>
+                    <button class="btn" onclick="openEditGameModal('${gioco.id}')">Modifica</button>
                     <button class="btn btn-danger" onclick="deleteGameUI('${gioco.id}')">Elimina</button>
                 </div>
             </div>
@@ -426,7 +426,7 @@ async function addRione() {
         nome: nome,
         username: username,
         password: password,
-        colore: colore,
+        colore: colore || '#000000',
         punteggio: 0
     };
 
@@ -459,6 +459,7 @@ async function addGioco() {
     const descTecnica = document.getElementById('gioco-desc-tecnica').value;
     const descSpettatori = document.getElementById('gioco-desc-spettatori').value;
     const liveUrl = document.getElementById('gioco-live-url').value;
+    const whatsappLink = document.getElementById('gioco-whatsapp').value;
     const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 1;
     const bonusPerPlayer = parseInt(document.getElementById('gioco-bonus-per-player').value) || 0;
     const mandatoryWomenInput = document.getElementById('gioco-mandatory-women').value;
@@ -507,6 +508,7 @@ async function addGioco() {
         description: descTecnica || null,
         desc_spectator: descSpettatori || null,
         live_stream_url: liveUrl || null,
+        whatsapp_link: whatsappLink || null,
         bracket_image_url: bracketUrl,
         total_players: totalPlayers,
         bonus_per_player: bonusPerPlayer,
