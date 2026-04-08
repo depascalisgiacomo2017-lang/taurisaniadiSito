@@ -653,25 +653,40 @@ function loadHighlightsList() {
 
 function loadConfigForm() {
     const bonusLimit = window.appState.config['bonus_limit'] || 3;
+    const instagram = window.appState.config['instagram_link'] || '';
+    const facebook = window.appState.config['facebook_link'] || '';
+    const youtube = window.appState.config['youtube_link'] || '';
     const whatsapp = window.appState.config['whatsapp_link'] || '';
     const discord = window.appState.config['discord_link'] || '';
 
     const bonusInput = document.getElementById('config-bonus');
+    const instagramInput = document.getElementById('config-instagram');
+    const facebookInput = document.getElementById('config-facebook');
+    const youtubeInput = document.getElementById('config-youtube');
     const whatsappInput = document.getElementById('config-whatsapp');
     const discordInput = document.getElementById('config-discord');
 
     if (bonusInput) bonusInput.value = bonusLimit;
+    if (instagramInput) instagramInput.value = instagram;
+    if (facebookInput) facebookInput.value = facebook;
+    if (youtubeInput) youtubeInput.value = youtube;
     if (whatsappInput) whatsappInput.value = whatsapp;
     if (discordInput) discordInput.value = discord;
 }
 
 async function saveConfig() {
     const bonusLimit = document.getElementById('config-bonus').value;
+    const instagram = document.getElementById('config-instagram').value;
+    const facebook = document.getElementById('config-facebook').value;
+    const youtube = document.getElementById('config-youtube').value;
     const whatsapp = document.getElementById('config-whatsapp').value;
     const discord = document.getElementById('config-discord').value;
 
     const updates = [
         { key: 'bonus_limit', value: bonusLimit },
+        { key: 'instagram_link', value: instagram },
+        { key: 'facebook_link', value: facebook },
+        { key: 'youtube_link', value: youtube },
         { key: 'whatsapp_link', value: whatsapp },
         { key: 'discord_link', value: discord }
     ];

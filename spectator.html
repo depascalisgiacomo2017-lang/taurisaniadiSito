@@ -241,6 +241,53 @@
             color: #666;
         }
 
+        .social-links-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .social-link-card {
+            background: rgba(255, 253, 248, 0.9);
+            border: 2px solid #d4a574;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: #8b6538;
+        }
+
+        .social-link-card a {
+            text-decoration: none;
+            color: #2c1810;
+            display: block;
+        }
+
+        .social-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .social-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .social-url {
+            font-size: 0.9em;
+            color: #666;
+            word-break: break-all;
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; }
             .tabs { gap: 5px; }
@@ -265,6 +312,7 @@
         <button class="tab" onclick="showTab('calendario')">📅 Calendario</button>
         <button class="tab" onclick="showTab('highlights')">🏆 Momenti Salienti</button>
         <button class="tab" onclick="showTab('classifica')">📊 Classifica</button>
+        <button class="tab" onclick="showTab('social')">🌐 Social</button>
         <button class="tab" onclick="showTab('info')">ℹ️ Informazioni</button>
     </div>
 
@@ -286,6 +334,11 @@
     <div id="classifica" class="content-section">
         <h2>Classifica</h2>
         <div id="classifica-container"></div>
+    </div>
+
+    <div id="social" class="content-section">
+        <h2>Social e Contatti</h2>
+        <div id="social-links"></div>
     </div>
 
     <div id="info" class="content-section">
@@ -325,6 +378,7 @@
         if (tabName === 'giochi') loadGames();
         if (tabName === 'calendario') loadCalendar();
         if (tabName === 'highlights') loadHighlights();
+        if (tabName === 'social') loadSocialLinks();
     }
 
     async function loadGames() {
@@ -391,6 +445,42 @@
                 </div>
             </div>
         `).join('');
+    }
+
+    function loadSocialLinks() {
+        const socialContainer = document.getElementById('social-links');
+
+        const socialPlatforms = [
+            { key: 'instagram_link', name: 'Instagram', icon: '📷', color: '#E4405F' },
+            { key: 'facebook_link', name: 'Facebook', icon: '👥', color: '#1877F2' },
+            { key: 'youtube_link', name: 'YouTube', icon: '▶️', color: '#FF0000' },
+            { key: 'whatsapp_link', name: 'WhatsApp', icon: '💬', color: '#25D366' },
+            { key: 'discord_link', name: 'Discord', icon: '🎮', color: '#5865F2' }
+        ];
+
+        const availableLinks = socialPlatforms
+            .map(platform => {
+                const url = window.appState.config[platform.key];
+                if (url && url.trim() !== '') {
+                    return `
+                        <div class="social-link-card">
+                            <a href="${url}" target="_blank" rel="noopener noreferrer">
+                                <div class="social-icon">${platform.icon}</div>
+                                <div class="social-name">${platform.name}</div>
+                                <div class="social-url">${url}</div>
+                            </a>
+                        </div>
+                    `;
+                }
+                return '';
+            })
+            .filter(link => link !== '');
+
+        if (availableLinks.length === 0) {
+            socialContainer.innerHTML = '<div class="empty-state"><p>Nessun link social disponibile al momento</p></div>';
+        } else {
+            socialContainer.innerHTML = `<div class="social-links-container">${availableLinks.join('')}</div>`;
+        }
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
