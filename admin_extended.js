@@ -202,6 +202,26 @@ function loadChatMessages() {
     container.scrollTop = container.scrollHeight;
 }
 
+async function clearAllChatMessages() {
+    if (!confirm('Sei sicuro di voler eliminare TUTTI i messaggi della chat? Questa azione non può essere annullata.')) {
+        return;
+    }
+
+    const { error } = await window.supabaseClient
+        .from('messaggi')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000');
+
+    if (error) {
+        showMessage('Errore eliminazione messaggi: ' + error.message, true);
+        return;
+    }
+
+    showMessage('Chat svuotata con successo');
+    await loadData();
+    loadChatMessages();
+}
+
 async function addNewFasciaEta() {
     const nome = document.getElementById('fascia-nome').value;
     const minEta = parseInt(document.getElementById('fascia-min').value);
@@ -678,6 +698,7 @@ window.updateRioneCredentialsUI = updateRioneCredentialsUI;
 window.uploadFile = uploadFile;
 window.sendChatMessage = sendChatMessage;
 window.loadChatMessages = loadChatMessages;
+window.clearAllChatMessages = clearAllChatMessages;
 window.forceDataRefresh = forceDataRefresh;
 window.addNewFasciaEta = addNewFasciaEta;
 window.loadFasceList = loadFasceList;

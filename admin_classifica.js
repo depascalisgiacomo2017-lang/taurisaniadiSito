@@ -39,16 +39,16 @@ async function uploadClassificaImage() {
     const file = fileInput.files[0];
 
     if (!file) {
-        showMessage('Seleziona un file immagine', true);
+        window.showMessage('Seleziona un file immagine', true);
         return;
     }
 
-    showMessage('Caricamento in corso...');
+    window.showMessage('Caricamento in corso...');
 
-    const uploadResult = await uploadFile(file, 'classifica');
+    const uploadResult = await window.uploadFile(file, 'classifica');
 
     if (!uploadResult.success) {
-        showMessage('Errore caricamento immagine: ' + uploadResult.error, true);
+        window.showMessage('Errore caricamento immagine: ' + uploadResult.error, true);
         return;
     }
 
@@ -61,11 +61,11 @@ async function uploadClassificaImage() {
         .eq('id', (await window.supabaseClient.from('classifica').select('id').single()).data?.id);
 
     if (error) {
-        showMessage('Errore aggiornamento classifica: ' + error.message, true);
+        window.showMessage('Errore aggiornamento classifica: ' + error.message, true);
         return;
     }
 
-    showMessage('Classifica aggiornata con successo');
+    window.showMessage('Classifica aggiornata con successo');
     loadClassifica();
 }
 
@@ -116,7 +116,7 @@ async function addMomentoSaliente() {
     const mediaFile = document.getElementById('momento-media').files[0];
 
     if (!titolo) {
-        showMessage('Inserisci almeno un titolo', true);
+        window.showMessage('Inserisci almeno un titolo', true);
         return;
     }
 
@@ -124,12 +124,12 @@ async function addMomentoSaliente() {
     let mediaType = null;
 
     if (mediaFile) {
-        showMessage('Caricamento media in corso...');
+        window.showMessage('Caricamento media in corso...');
 
-        const uploadResult = await uploadFile(mediaFile, 'momenti-salienti');
+        const uploadResult = await window.uploadFile(mediaFile, 'momenti-salienti');
 
         if (!uploadResult.success) {
-            showMessage('Errore caricamento media: ' + uploadResult.error, true);
+            window.showMessage('Errore caricamento media: ' + uploadResult.error, true);
             return;
         }
 
@@ -150,11 +150,11 @@ async function addMomentoSaliente() {
         .insert(momentoData);
 
     if (error) {
-        showMessage('Errore creazione momento saliente: ' + error.message, true);
+        window.showMessage('Errore creazione momento saliente: ' + error.message, true);
         return;
     }
 
-    showMessage('Momento saliente creato con successo');
+    window.showMessage('Momento saliente creato con successo');
 
     document.getElementById('momento-titolo').value = '';
     document.getElementById('momento-descrizione').value = '';
@@ -173,11 +173,11 @@ async function deleteMomentoSaliente(momentoId) {
         .eq('id', momentoId);
 
     if (error) {
-        showMessage('Errore eliminazione: ' + error.message, true);
+        window.showMessage('Errore eliminazione: ' + error.message, true);
         return;
     }
 
-    showMessage('Momento saliente eliminato');
+    window.showMessage('Momento saliente eliminato');
     loadMomentiSalienti();
 }
 

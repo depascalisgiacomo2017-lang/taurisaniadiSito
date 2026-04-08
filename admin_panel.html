@@ -430,7 +430,13 @@
     </div>
 
     <div id="chat" class="section">
-        <h2>Chat con Capi-Rione</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Chat con Capi-Rione</h2>
+            <button class="btn btn-danger" onclick="clearAllChatMessages()" style="padding: 10px 20px;">
+                🗑️ Svuota Chat
+            </button>
+        </div>
+
         <div id="chat-messages" style="max-height: 400px; overflow-y: auto; background: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #8b6538;"></div>
 
         <div class="form-group">

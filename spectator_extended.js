@@ -27,8 +27,8 @@ function loadGames() {
             <p>${game.desc_spectator || game.description || ''}</p>
             <div class="game-info">
                 ${game.location ? `<div class="info-item"><span class="info-label">Luogo:</span> ${game.location}</div>` : ''}
-                ${game.date ? `<div class="info-item"><span class="info-label">Data:</span> ${formatDateIT(game.date)}</div>` : ''}
-                ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${formatTimeIT(game.time_start)} - ${formatTimeIT(game.time_end || '')}</div>` : ''}
+                ${game.date ? `<div class="info-item"><span class="info-label">Data:</span> ${window.formatDateIT(game.date)}</div>` : ''}
+                ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${window.formatTimeIT(game.time_start)} - ${window.formatTimeIT(game.time_end || '')}</div>` : ''}
             </div>
 
             ${game.bracket_image_url ? `
@@ -76,8 +76,8 @@ function loadCalendar() {
         <div class="game-card">
             <h3>${game.name}</h3>
             <div class="game-info">
-                <div class="info-item"><span class="info-label">Data:</span> ${formatDateIT(game.date)}</div>
-                ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${formatTimeIT(game.time_start)} - ${formatTimeIT(game.time_end || '')}</div>` : ''}
+                <div class="info-item"><span class="info-label">Data:</span> ${window.formatDateIT(game.date)}</div>
+                ${game.time_start ? `<div class="info-item"><span class="info-label">Orario:</span> ${window.formatTimeIT(game.time_start)} - ${window.formatTimeIT(game.time_end || '')}</div>` : ''}
                 ${game.location ? `<div class="info-item"><span class="info-label">Luogo:</span> ${game.location}</div>` : ''}
             </div>
         </div>
@@ -124,7 +124,7 @@ function loadHighlights() {
             ` : ''}
 
             <small style="color: #999; display: block; margin-top: 10px;">
-                ${formatDateTimeIT(highlight.created_at)}
+                ${window.formatDateTimeIT(highlight.created_at)}
             </small>
         </div>
     `).join('');
@@ -143,7 +143,7 @@ function loadClassifica() {
             <img src="${window.appState.classifica.image_url}" alt="Classifica"
                 style="max-width: 100%; border-radius: 8px; border: 3px solid #8b6538; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
             <p style="color: #5d4037; margin-top: 15px; font-size: 0.9em;">
-                Ultimo aggiornamento: ${formatDateTimeIT(window.appState.classifica.updated_at)}
+                Ultimo aggiornamento: ${window.formatDateTimeIT(window.appState.classifica.updated_at)}
             </p>
         </div>
     `;
