@@ -33,9 +33,14 @@ function loadGames() {
 
             ${game.bracket_image_url ? `
                 <div style="margin: 15px 0;">
-                    <h4 style="color: #2c1810; margin-bottom: 10px;">Tabellone Scontri</h4>
-                    <img src="${game.bracket_image_url}" alt="Tabellone ${game.name}"
-                        style="max-width: 100%; border-radius: 8px; border: 2px solid #8b6538;">
+                    <button onclick="var tab = document.getElementById('tabellone-${game.id}'); tab.style.display = tab.style.display === 'none' ? 'block' : 'none';" 
+                        style="padding: 10px 20px; background: linear-gradient(180deg, #8b6538 0%, #6d4c2a 100%); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cinzel', serif; box-shadow: 0 3px 5px rgba(0,0,0,0.2);">
+                        👁️ Mostra/Nascondi Tabellone
+                    </button>
+                    <div id="tabellone-${game.id}" style="display: none; margin-top: 15px; animation: fadeIn 0.3s;">
+                        <img src="${game.bracket_image_url}" alt="Tabellone ${game.name}"
+                            style="max-width: 100%; border-radius: 8px; border: 2px solid #8b6538;">
+                    </div>
                 </div>
             ` : ''}
 

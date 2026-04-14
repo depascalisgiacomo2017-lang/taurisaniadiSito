@@ -261,6 +261,7 @@
         <button class="tab" onclick="showSection('fasce-eta')">👥 Fasce Età</button>
         <button class="tab" onclick="showSection('classifica')">🏆 Classifica</button>
         <button class="tab" onclick="showSection('config')">⚙️ Configurazioni</button>
+        <button class="tab" onclick="showSection('formazioni')">📋 Formazioni</button>
     </div>
 
     <div id="rioni" class="section active">
@@ -522,6 +523,11 @@
         <button class="btn" onclick="saveConfig()">Salva Configurazioni</button>
     </div>
 </div>
+  <div id="formazioni" class="section">
+        <h2>Formazioni Rioni</h2>
+        <p style="color: #5d4037; margin-bottom: 20px;">Ecco gli atleti divisi per rione e il numero di giochi a cui partecipano.</p>
+        <div id="stats-container"></div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/supabase_client.js"></script>
@@ -561,6 +567,7 @@
         if (sectionName === 'highlights') loadMomentiSalienti();
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
+        if (sectionName === 'formazioni') loadAthleteStats()
     }
 
     function showMessage(text, type = 'success') {
