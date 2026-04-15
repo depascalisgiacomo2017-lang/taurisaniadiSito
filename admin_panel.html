@@ -530,11 +530,14 @@
 <script type="module" src="/admin_classifica.js"></script>
 
 <script>
-    if (localStorage.getItem('userRole') !== 'admin') {
-        window.location.href = 'index.html';
-    }
-
     document.addEventListener('DOMContentLoaded', async () => {
+        await window.initializeAuth?.();
+        const isAuthorized = await window.checkAuth?.('admin');
+        if (!isAuthorized) {
+            window.location.href = 'index.html';
+            return;
+        }
+
         await loadData();
         setupRealtimeSubscription();
         loadRioniList();
@@ -571,8 +574,17 @@
         if (sectionName === 'highlights') loadHighlightsList();
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
-        if (sectionName === 'formazioni') loadAthleteStats(); 
+        if (sectionName === 'formazioni') loadAthleteStats();
         if (sectionName === 'formazioni-giochi') loadFormazioniGiochiAdmin();
+    }
+
+    async function logout() {
+        const result = await window.signOut?.();
+        if (result?.success) {
+            window.location.href = 'index.html';
+        } else {
+            showMessage('Errore durante il logout', 'error');
+        }
     }
 </script>
 

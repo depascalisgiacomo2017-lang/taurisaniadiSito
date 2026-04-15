@@ -329,15 +329,18 @@
 <script type="module" src="/caporione_functions.js"></script>
 <script type="module" src="/caporione_positions.js"></script>
 <script>
-    if (localStorage.getItem('userRole') !== 'caporione') {
-        window.location.href = 'index.html';
-    }
-
     document.addEventListener('DOMContentLoaded', async () => {
+        await window.initializeAuth?.();
+        const isAuthorized = await window.checkAuth?.('caporione');
+        if (!isAuthorized) {
+            window.location.href = 'index.html';
+            return;
+        }
+
         await loadData();
         setupRealtimeSubscription();
 
-        const rioneId = localStorage.getItem('rioneId');
+        const rioneId = window.getCurrentRioneId?.();
         const rione = window.appState.rioni.find(r => r.id === rioneId);
 
         if (rione) {
@@ -367,6 +370,15 @@
         setTimeout(() => {
             msg.className = 'message';
         }, 3000);
+    }
+
+    async function logout() {
+        const result = await window.signOut?.();
+        if (result?.success) {
+            window.location.href = 'index.html';
+        } else {
+            showMessage('Errore durante il logout', 'error');
+        }
     }
 </script>
 
