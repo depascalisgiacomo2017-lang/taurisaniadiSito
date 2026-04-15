@@ -129,26 +129,32 @@ function updateEditPositionsConfig(gioco) {
     if (!container) return;
 
     const positions = gioco?.player_positions || [];
+    const fasce = window.appState.fasce_eta || []; // Recupero le fasce salvate
 
     let html = '<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">';
     html += '<h4 style="margin-bottom: 15px; color: #2c1810;">Configurazione Posizioni</h4>';
 
     for (let i = 1; i <= totalPlayers; i++) {
-        const posConfig = positions.find(p => p.position === i) || {min_age: 0, max_age: 99, required_gender: null};
+        const posConfig = positions.find(p => p.position === i) || {min_age: 0, max_age: 99, required_gender: null, fascia_nome: 'Libera'};
+
+        // Genero le opzioni della tendina e preseleziono quella già salvata per questa posizione
+        let fasceOptionsHTML = fasce.map(f => {
+            const isSelected = (posConfig.fascia_nome === f.nome) ? 'selected' : '';
+            return `<option value="${f.id}" data-min="${f.min_eta}" data-max="${f.max_eta}" data-nome="${f.nome}" ${isSelected}>
+                ${f.nome} (${f.min_eta}-${f.max_eta} anni)
+            </option>`;
+        }).join('');
 
         html += `
             <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 2px solid #8b6538;">
                 <h5 style="margin-bottom: 10px; color: #5d4037;">Posizione ${i}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Min</label>
-                        <input type="number" id="edit-pos-${i}-min-age" value="${posConfig.min_age}" min="0"
-                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Max</label>
-                        <input type="number" id="edit-pos-${i}-max-age" value="${posConfig.max_age}" min="0"
-                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Fascia Età</label>
+                        <select id="edit-pos-${i}-fascia" style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                            <option value="" data-min="0" data-max="99" ${!posConfig.fascia_nome || posConfig.fascia_nome === 'Libera' ? 'selected' : ''}>Nessun limite (0-99)</option>
+                            ${fasceOptionsHTML}
+                        </select>
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Sesso Richiesto</label>
