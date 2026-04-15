@@ -199,7 +199,8 @@ async function saveEditedGame() {
 
     const playerPositions = [];
     for (let i = 1; i <= totalPlayers; i++) {
-        const fasciaSelect = document.getElementById(`pos-${i}-fascia`);
+        // NOTA: Usiamo "edit-pos-" perché siamo nel modale di modifica
+        const fasciaSelect = document.getElementById(`edit-pos-${i}-fascia`);
         const selectedOption = fasciaSelect ? fasciaSelect.options[fasciaSelect.selectedIndex] : null;
         
         // Estraiamo i dati nascosti nella tendina
@@ -207,7 +208,7 @@ async function saveEditedGame() {
         const maxAge = selectedOption && fasciaSelect.value ? parseInt(selectedOption.getAttribute('data-max')) : 99;
         const fasciaNome = selectedOption && fasciaSelect.value ? selectedOption.getAttribute('data-nome') : 'Libera';
 
-        const requiredGender = document.getElementById(`pos-${i}-gender`)?.value || null;
+        const requiredGender = document.getElementById(`edit-pos-${i}-gender`)?.value || null;
 
         playerPositions.push({
             position: i,
