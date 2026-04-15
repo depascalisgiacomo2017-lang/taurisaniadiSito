@@ -479,7 +479,6 @@
 
     <div id="config" class="section">
         <h2>Configurazioni Globali</h2>
-
         <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #4caf50;">
             <h3 style="margin-bottom: 10px; color: #2c1810;">Aggiornamento Dati</h3>
             <p style="color: #5d4037; margin-bottom: 15px;">Ricarica tutti i dati dal server per tutti gli utenti connessi</p>
@@ -516,20 +515,19 @@
         </div>
         <button class="btn" onclick="saveConfig()">Salva Configurazioni</button>
     </div>
-</div>
-  <div id="formazioni" class="section">
+
+    <div id="formazioni" class="section">
         <h2>Formazioni Rioni</h2>
         <p style="color: #5d4037; margin-bottom: 20px;">Ecco gli atleti divisi per rione e il numero di giochi a cui partecipano.</p>
         <div id="stats-container"></div>
     </div>
-  
-  <div id="formazioni-giochi" class="section">
+
+    <div id="formazioni-giochi" class="section">
         <h2>Formazioni per Gioco</h2>
         <p style="color: #5d4037; margin-bottom: 20px;">Riepilogo delle squadre schierate da tutti i rioni per ogni gioco.</p>
         <div id="formazioni-giochi-container"></div>
     </div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/supabase_client.js"></script>
 <script type="module" src="/auth.js"></script>
 <script type="module" src="/date_utils.js"></script>
@@ -548,7 +546,7 @@
         setupRealtimeSubscription();
         loadRioniList();
         loadGiochiList();
-        loadHighlightsList(); /* Corretto qui! */
+        loadHighlightsList(); // Corretto: usava un nome sbagliato
         loadClassifica();
         loadConfigForm();
         loadRioniCredentials();
@@ -556,30 +554,28 @@
     });
 
     function showSection(sectionName) {
-        // 1. Cerca la scatola HTML da aprire
         const sectionElement = document.getElementById(sectionName);
         
-        // 2. Sistema "Anti-Crash"
         if (!sectionElement) {
-            showMessage('Attenzione: Manca il blocco HTML per "' + sectionName + '"', 'error');
+            console.error('Manca il blocco HTML per:', sectionName);
             return;
         }
 
-        // 3. Nasconde tutte le sezioni e spegne i bottoni
+        // Nasconde tutto
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-        // 4. Mostra la sezione cliccata
+        // Mostra la sezione scelta
         sectionElement.classList.add('active');
-        if (window.event && window.event.target) {
-            window.event.target.classList.add('active');
+        if (event && event.target) {
+            event.target.classList.add('active');
         }
 
-        // 5. Carica i dati specifici
+        // Caricamento dati
         if (sectionName === 'chat') loadChatMessages();
         if (sectionName === 'credenziali') loadRioniCredentials();
         if (sectionName === 'fasce-eta') loadFasceList();
-        if (sectionName === 'highlights') loadHighlightsList(); /* Corretto qui! */
+        if (sectionName === 'highlights') loadHighlightsList(); // Corretto: usava un nome sbagliato
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
         if (sectionName === 'formazioni') loadAthleteStats(); 
