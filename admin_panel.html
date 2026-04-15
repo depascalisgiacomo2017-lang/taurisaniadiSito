@@ -561,21 +561,21 @@
         loadFasceList();
     });
 
-    function showSection(sectionName) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+   function showSection(sectionName) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-        document.getElementById(sectionName).classList.add('active');
-        event.target.classList.add('active');
+    document.getElementById(sectionName).classList.add('active');
+    event.target.classList.add('active');
 
-        if (sectionName === 'chat') loadChatMessages();
-        if (sectionName === 'credenziali') loadRioniCredentials();
-        if (sectionName === 'fasce-eta') loadFasceList();
-        if (sectionName === 'highlights') loadMomentiSalienti();
-        if (sectionName === 'classifica') loadClassifica();
-        if (sectionName === 'giochi') loadGiochiList();
-        if (sectionName === 'formazioni') loadAthleteStats()
-    }
+    // Le tue chiamate esistenti...
+    if (sectionName === 'classifica') loadClassifica();
+    if (sectionName === 'giochi') loadGiochiList();
+    if (sectionName === 'formazioni') loadAthleteStats(); 
+
+    // AGGIUNGI QUESTA RIGA:
+    if (sectionName === 'formazioni-giochi') loadFormazioniGiochiAdmin();
+}
 
     function showMessage(text, type = 'success') {
         const msg = document.getElementById('message');
