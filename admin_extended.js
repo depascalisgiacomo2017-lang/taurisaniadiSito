@@ -619,6 +619,10 @@ function updatePositionsConfig() {
     container.innerHTML = html;
 }
 
+    html += '</div>';
+    container.innerHTML = html;
+}
+
 function loadRioniList() {
     const container = document.getElementById('rioni-list');
     if (!container) return;
