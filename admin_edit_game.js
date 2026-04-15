@@ -95,7 +95,7 @@ function createEditGameModal() {
                         <label>Numero Totale Giocatori</label>
                         <input type="number" id="edit-gioco-total-players" min="1" onchange="updateEditPositionsConfig()">
                     </div>
-                    
+                   
                 </div>
 
                 <div class="form-group">
