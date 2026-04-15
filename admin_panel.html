@@ -537,6 +537,7 @@
 <script type="module" src="/admin_extended.js"></script>
 <script type="module" src="/admin_edit_game.js"></script>
 <script type="module" src="/admin_classifica.js"></script>
+
 <script>
     if (localStorage.getItem('userRole') !== 'admin') {
         window.location.href = 'index.html';
@@ -547,28 +548,28 @@
         setupRealtimeSubscription();
         loadRioniList();
         loadGiochiList();
-        loadMomentiSalienti();
+        loadHighlightsList(); /* Corretto qui! */
         loadClassifica();
         loadConfigForm();
         loadRioniCredentials();
         loadFasceList();
     });
 
-  function showSection(sectionName) {
+    function showSection(sectionName) {
         // 1. Cerca la scatola HTML da aprire
         const sectionElement = document.getElementById(sectionName);
         
-        // 2. Sistema "Anti-Crash": se non trova la scatola HTML, ti avvisa e si ferma!
+        // 2. Sistema "Anti-Crash"
         if (!sectionElement) {
             showMessage('Attenzione: Manca il blocco HTML per "' + sectionName + '"', 'error');
             return;
         }
 
-        // 3. Nasconde tutte le sezioni e "spegne" i bottoni
+        // 3. Nasconde tutte le sezioni e spegne i bottoni
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-        // 4. Mostra la sezione cliccata e "accende" il bottone
+        // 4. Mostra la sezione cliccata
         sectionElement.classList.add('active');
         if (window.event && window.event.target) {
             window.event.target.classList.add('active');
@@ -578,7 +579,7 @@
         if (sectionName === 'chat') loadChatMessages();
         if (sectionName === 'credenziali') loadRioniCredentials();
         if (sectionName === 'fasce-eta') loadFasceList();
-        if (sectionName === 'highlights') loadMomentiSalienti();
+        if (sectionName === 'highlights') loadHighlightsList(); /* Corretto qui! */
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
         if (sectionName === 'formazioni') loadAthleteStats(); 
