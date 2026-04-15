@@ -568,12 +568,10 @@
     document.getElementById(sectionName).classList.add('active');
     event.target.classList.add('active');
 
-    // Le tue chiamate esistenti...
     if (sectionName === 'classifica') loadClassifica();
     if (sectionName === 'giochi') loadGiochiList();
     if (sectionName === 'formazioni') loadAthleteStats(); 
-
-    // AGGIUNGI QUESTA RIGA:
+     
     if (sectionName === 'formazioni-giochi') loadFormazioniGiochiAdmin();
 }
 
