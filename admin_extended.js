@@ -580,7 +580,7 @@ function updatePositionsConfig() {
 
     if (!container || totalPlayers === 0) return;
 
-    // Recuperiamo le fasce d'età disponibili dallo stato dell'app
+    // 1. Recuperiamo le fasce d'età disponibili dal database/stato
     const fasce = window.appState.fasce_eta || [];
     const fasceOptions = fasce.map(f => 
         `<option value="${f.id}" data-min="${f.min_eta}" data-max="${f.max_eta}" data-nome="${f.nome}">
@@ -588,28 +588,31 @@ function updatePositionsConfig() {
         </option>`
     ).join('');
 
-    let html = '<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">';
-    html += '<h4 style="margin-bottom: 15px; color: #2c1810;">Configurazione Posizioni</h4>';
+    // 2. Creiamo l'interfaccia
+    let html = '<div style="margin-top: 20px;">';
     for (let i = 1; i <= totalPlayers; i++) {
         html += `
             <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 2px solid #8b6538;">
-                <h5 style="margin-bottom: 10px; color: #5d4037;">Posizione ${i}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <h5 style="margin-bottom: 15px; color: #5d4037; font-size: 1.1em;">Posizione ${i}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Fascia Età</label>
-                        <select id="pos-${i}-fascia" style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
-                            <option value="">Nessun limite</option>
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9em; text-transform: uppercase;">Fascia Età</label>
+                        <select id="pos-${i}-fascia" style="width: 100%; padding: 10px; border: 1px solid #8b6538; border-radius: 4px; background: #fffdf8; color: #2c1810; font-family: 'Playfair Display', serif;">
+                            <option value="" data-min="0" data-max="99">Nessun limite</option>
                             ${fasceOptions}
                         </select>
                     </div>
+
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Sesso Richiesto</label>
-                        <select id="pos-${i}-gender" style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9em; text-transform: uppercase;">Sesso Richiesto</label>
+                        <select id="pos-${i}-gender" style="width: 100%; padding: 10px; border: 1px solid #8b6538; border-radius: 4px; background: #fffdf8; color: #2c1810; font-family: 'Playfair Display', serif;">
                             <option value="any">Qualsiasi</option>
                             <option value="M">Maschio</option>
                             <option value="F">Femmina</option>
                         </select>
                     </div>
+
                 </div>
             </div>
         `;
