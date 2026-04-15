@@ -64,12 +64,12 @@ function loadFormazioniListWithPositions() {
                         return `
                             <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 10px; border: 2px solid #8b6538;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h4 style="color: #5d4037; margin: 0;">Posizione ${pos}</h4>
-                                    <span style="font-size: 0.85em; color: #666;">
-                                        Età: ${posConfig.min_age}-${posConfig.max_age} anni
-                                        ${posConfig.required_gender ? ` | Sesso: ${posConfig.required_gender}` : ''}
-                                    </span>
-                                </div>
+                                <h4 style="color: #5d4037; margin: 0;">Posizione ${pos}</h4>
+                                <span style="font-size: 0.85em; color: #666;">
+                                    Fascia: <strong style="color: #8b6538;">${posConfig.fascia_nome || (posConfig.min_age + '-' + posConfig.max_age + ' anni')}</strong>
+                                    ${posConfig.required_gender ? ` | Sesso: ${posConfig.required_gender}` : ''}
+                                </span>
+                            </div>
 
                                 ${assignedPlayer ? `
                                     <div style="background: #e8f5e9; padding: 10px; border-radius: 3px; margin-bottom: 10px;">
