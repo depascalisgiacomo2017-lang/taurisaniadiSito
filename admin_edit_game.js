@@ -193,14 +193,21 @@ async function saveEditedGame() {
 
     const playerPositions = [];
     for (let i = 1; i <= totalPlayers; i++) {
-        const minAge = parseInt(document.getElementById(`edit-pos-${i}-min-age`)?.value) || 0;
-        const maxAge = parseInt(document.getElementById(`edit-pos-${i}-max-age`)?.value) || 99;
-        const requiredGender = document.getElementById(`edit-pos-${i}-gender`)?.value || null;
+        const fasciaSelect = document.getElementById(`pos-${i}-fascia`);
+        const selectedOption = fasciaSelect ? fasciaSelect.options[fasciaSelect.selectedIndex] : null;
+        
+        // Estraiamo i dati nascosti nella tendina
+        const minAge = selectedOption && fasciaSelect.value ? parseInt(selectedOption.getAttribute('data-min')) : 0;
+        const maxAge = selectedOption && fasciaSelect.value ? parseInt(selectedOption.getAttribute('data-max')) : 99;
+        const fasciaNome = selectedOption && fasciaSelect.value ? selectedOption.getAttribute('data-nome') : 'Libera';
+
+        const requiredGender = document.getElementById(`pos-${i}-gender`)?.value || null;
 
         playerPositions.push({
             position: i,
             min_age: minAge,
             max_age: maxAge,
+            fascia_nome: fasciaNome,
             required_gender: requiredGender === 'any' ? null : requiredGender
         });
     }
