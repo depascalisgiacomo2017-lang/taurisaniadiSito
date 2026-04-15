@@ -339,18 +339,16 @@
             <input type="file" id="gioco-bracket-file" accept="image/*">
             <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Carica un'immagine del tabellone</p>
         </div>
-        <div class="grid-2">
-            <div class="form-group">
-                <label>Numero Totale Giocatori</label>
-                <input type="number" id="gioco-total-players" value="5" min="1" onchange="updatePositionsConfig()">
-            </div>
-            
 
+        <div class="form-group">
+            <label>Numero Totale Giocatori</label>
+            <input type="number" id="gioco-total-players" value="5" min="1" onchange="updatePositionsConfig()">
+        </div>
         <div class="form-group">
             <label>Numero Minimo Donne (opzionale)</label>
             <input type="number" id="gioco-mandatory-women" placeholder="Lascia vuoto per calcolo automatico" min="0">
             <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
-                Se lasciato vuoto, verrà calcolato automaticamente dalle posizioni con sesso "Femmina". Se specificato, sovrascrive il calcolo automatico.
+                Se lasciato vuoto, verrà calcolato automaticamente dalle posizioni con sesso "Femmina".
             </p>
         </div>
 
@@ -382,17 +380,13 @@
             <div class="form-group">
                 <label>Carica Foto o Video</label>
                 <input type="file" id="momento-media" accept="image/*,video/*">
-                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
-                    Carica il file multimediale dal tuo dispositivo
-                </p>
+                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Carica il file multimediale dal tuo dispositivo</p>
             </div>
 
             <div class="form-group">
                 <label>Link Esterno (opzionale)</label>
                 <input type="text" id="momento-link" placeholder="https://youtube.com/...">
-                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">
-                    Link al video originale (se disponibile)
-                </p>
+                <p style="font-size: 0.9em; color: #5d4037; margin-top: 5px;">Link al video originale (se disponibile)</p>
             </div>
 
             <button class="btn" onclick="addMomentoSaliente()">Aggiungi Momento Saliente</button>
@@ -427,9 +421,7 @@
     <div id="chat" class="section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Chat con Capi-Rione</h2>
-            <button class="btn btn-danger" onclick="clearAllChatMessages()" style="padding: 10px 20px;">
-                🗑️ Svuota Chat
-            </button>
+            <button class="btn btn-danger" onclick="clearAllChatMessages()" style="padding: 10px 20px;">🗑️ Svuota Chat</button>
         </div>
 
         <div id="chat-messages" style="max-height: 400px; overflow-y: auto; background: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 2px solid #8b6538;"></div>
@@ -488,8 +480,8 @@
         </div>
 
         <div class="form-group">
-            <label>Limite Bonus</label>
-            <input type="number" id="config-bonus" value="3">
+            <label>Limite Bonus Globali (Giocatori fuori fascia concessi a rione)</label>
+            <input type="number" id="config-bonus" value="3" min="0">
         </div>
 
         <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2c1810;">Link Social</h3>
@@ -517,7 +509,7 @@
     </div>
 
     <div id="formazioni" class="section">
-        <h2>Formazioni Rioni</h2>
+        <h2>Statistiche Atleti</h2>
         <p style="color: #5d4037; margin-bottom: 20px;">Ecco gli atleti divisi per rione e il numero di giochi a cui partecipano.</p>
         <div id="stats-container"></div>
     </div>
@@ -527,6 +519,7 @@
         <p style="color: #5d4037; margin-bottom: 20px;">Riepilogo delle squadre schierate da tutti i rioni per ogni gioco.</p>
         <div id="formazioni-giochi-container"></div>
     </div>
+
 </div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/supabase_client.js"></script>
 <script type="module" src="/auth.js"></script>
@@ -546,7 +539,7 @@
         setupRealtimeSubscription();
         loadRioniList();
         loadGiochiList();
-        loadHighlightsList(); // Corretto: usava un nome sbagliato
+        loadHighlightsList();
         loadClassifica();
         loadConfigForm();
         loadRioniCredentials();
@@ -555,9 +548,9 @@
 
     function showSection(sectionName) {
         const sectionElement = document.getElementById(sectionName);
-        
         if (!sectionElement) {
             console.error('Manca il blocco HTML per:', sectionName);
+            showMessage('Errore: Sezione non trovata!', 'error');
             return;
         }
 
@@ -567,15 +560,15 @@
 
         // Mostra la sezione scelta
         sectionElement.classList.add('active');
-        if (event && event.target) {
-            event.target.classList.add('active');
+        if (window.event && window.event.target) {
+            window.event.target.classList.add('active');
         }
 
         // Caricamento dati
         if (sectionName === 'chat') loadChatMessages();
         if (sectionName === 'credenziali') loadRioniCredentials();
         if (sectionName === 'fasce-eta') loadFasceList();
-        if (sectionName === 'highlights') loadHighlightsList(); // Corretto: usava un nome sbagliato
+        if (sectionName === 'highlights') loadHighlightsList();
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
         if (sectionName === 'formazioni') loadAthleteStats(); 
