@@ -829,3 +829,4 @@ window.loadRioniList = loadRioniList;
 window.loadHighlightsList = loadHighlightsList;
 window.loadConfigForm = loadConfigForm;
 window.saveConfig = saveConfig;
+window.loadFormazioniGiochiAdmin = loadFormazioniGiochiAdmin;
