@@ -95,10 +95,7 @@ function createEditGameModal() {
                         <label>Numero Totale Giocatori</label>
                         <input type="number" id="edit-gioco-total-players" min="1" onchange="updateEditPositionsConfig()">
                     </div>
-                    <div class="form-group">
-                        <label>Bonus per Giocatore Fuori Fascia</label>
-                        <input type="number" id="edit-gioco-bonus-per-player" min="0">
-                    </div>
+                    
                 </div>
 
                 <div class="form-group">
