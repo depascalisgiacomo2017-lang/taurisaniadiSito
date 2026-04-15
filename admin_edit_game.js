@@ -21,7 +21,6 @@ function openEditGameModal(gameId) {
     document.getElementById('edit-gioco-live-url').value = gioco.live_stream_url || '';
     document.getElementById('edit-gioco-whatsapp').value = gioco.whatsapp_link || '';
     document.getElementById('edit-gioco-total-players').value = gioco.total_players || 5;
-    document.getElementById('edit-gioco-bonus-per-player').value = gioco.bonus_per_player || 0;
     document.getElementById('edit-gioco-mandatory-women').value = gioco.mandatory_women !== null ? gioco.mandatory_women : '';
 
     updateEditPositionsConfig(gioco);
