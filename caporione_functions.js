@@ -404,82 +404,79 @@ async function removePlayerFromSquad(gameId, playerIndex) {
     loadFormazioniList();
 }
 
-function validateSquad(gameId) {
+function validateSquadWithPositions(gameId) {
     const rioneId = localStorage.getItem('rioneId');
     const gioco = window.appState.giochi.find(g => g.id === gameId);
     const squadra = window.appState.squadre.find(s => s.game_id === gameId && s.rione_id === rioneId);
     const validationContainer = document.getElementById(`validation-${gameId}`);
-
     if (!squadra || !gioco || !validationContainer) return;
 
-    const playerNames = squadra.player_names || [];
-    const atleti = getRioneAtleti();
+    const players = squadra.players || [];
+    const positions = gioco.player_positions || [];
+    const totalPlayers = gioco.total_players || positions.length || 5;
 
-    const totalPlayers = gioco.total_players || 5;
-    const mandatoryWomen = gioco.mandatory_women !== null && gioco.mandatory_women !== undefined
-        ? gioco.mandatory_women
-        : (gioco.player_positions?.filter(p => p.required_gender === 'F').length || 0);
-    const minAge = gioco.min_age || 0;
-    const maxAge = gioco.max_age || 99;
-    const bonusPerPlayer = gioco.bonus_per_player || 0;
-
-    let womenCount = 0;
-    let outOfAgeCount = 0;
-    const errors = [];
-    const warnings = [];
-
-    playerNames.forEach(name => {
-        const atleta = atleti.find(a => `${a.nome} ${a.cognome}` === name);
-        if (atleta) {
-            if (atleta.sesso === 'F') womenCount++;
-            if (atleta.eta < minAge || atleta.eta > maxAge) {
-                outOfAgeCount++;
-                warnings.push(`${name} (${atleta.eta} anni) è fuori fascia età`);
-            }
-        }
+    // --- NUOVA LOGICA BONUS ---
+    const globalBonusLimit = parseInt(window.appState.config['bonus_limit']) || 0;
+    
+    // Calcoliamo quanti bonus ha usato in TOTALE il rione in tutti i giochi
+    const tutteLeSquadreRione = window.appState.squadre.filter(s => s.rione_id === rioneId);
+    let bonusTotaliUsati = 0;
+    tutteLeSquadreRione.forEach(s => {
+        bonusTotaliUsati += (s.players || []).filter(p => p.out_of_range).length;
     });
 
-    if (playerNames.length < totalPlayers) {
-        errors.push(`Mancano ${totalPlayers - playerNames.length} giocatori (richiesti: ${totalPlayers})`);
-    } else if (playerNames.length > totalPlayers) {
-        errors.push(`Troppi giocatori (richiesti: ${totalPlayers}, presenti: ${playerNames.length})`);
+    const errors = [];
+    const warnings = [];
+    let outOfRangeInQuestoGioco = 0;
+
+    if (players.length < totalPlayers) {
+        errors.push(`Mancano ${totalPlayers - players.length} giocatori (richiesti: ${totalPlayers})`);
     }
 
-    if (womenCount < mandatoryWomen) {
-        errors.push(`Mancano ${mandatoryWomen - womenCount} donne (minimo richiesto: ${mandatoryWomen})`);
-    }
+    for (let i = 1; i <= totalPlayers; i++) {
+        const posConfig = positions.find(p => p.position === i) || {min_age: 0, max_age: 99, required_gender: null};
+        const assignedPlayer = players.find(p => p.position === i);
+        if (!assignedPlayer) continue;
 
-    const totalBonus = outOfAgeCount * bonusPerPlayer;
-
-    let html = '<div style="padding: 15px; border-radius: 5px; border: 2px solid ';
-
-    if (errors.length > 0) {
-        html += '#d32f2f; background: #ffebee;">';
-        html += '<p style="font-weight: bold; color: #d32f2f; margin-bottom: 10px;">❌ Requisiti non soddisfatti:</p>';
-        html += '<ul style="margin: 0; padding-left: 20px; color: #d32f2f;">';
-        errors.forEach(err => html += `<li>${err}</li>`);
-        html += '</ul>';
-    } else {
-        html += '#2e7d32; background: #e8f5e9;">';
-        html += '<p style="font-weight: bold; color: #2e7d32; margin-bottom: 10px;">✅ Tutti i requisiti soddisfatti!</p>';
-        html += `<p style="color: #2e7d32;">Giocatori: ${playerNames.length}/${totalPlayers}</p>`;
-        html += `<p style="color: #2e7d32;">Donne: ${womenCount}/${mandatoryWomen}</p>`;
-    }
-
-    if (warnings.length > 0) {
-        html += '<div style="margin-top: 10px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 3px;">';
-        html += '<p style="font-weight: bold; color: #e65100; margin-bottom: 5px;">⚠ Giocatori fuori fascia età:</p>';
-        html += '<ul style="margin: 0; padding-left: 20px; color: #e65100; font-size: 0.9em;">';
-        warnings.forEach(warn => html += `<li>${warn}</li>`);
-        html += '</ul>';
-        if (bonusPerPlayer > 0) {
-            html += `<p style="color: #e65100; font-weight: bold; margin-top: 8px;">Bonus consumati: ${totalBonus} punti (${outOfAgeCount} × ${bonusPerPlayer})</p>`;
+        if (posConfig.required_gender && assignedPlayer.gender !== posConfig.required_gender) {
+            errors.push(`Posizione ${i}: richiesto sesso ${posConfig.required_gender}, assegnato ${assignedPlayer.gender}`);
         }
-        html += '</div>';
+
+        if (assignedPlayer.out_of_range) {
+            outOfRangeInQuestoGioco++;
+            warnings.push(`${assignedPlayer.player_name} (Pos. ${i}) è fuori fascia`);
+        }
     }
 
-    html += '</div>';
+    // REGOLA 1: Massimo 1 fuori fascia per gioco
+    if (outOfRangeInQuestoGioco > 1) {
+        errors.push(`❌ Errore Bonus: Puoi usare al massimo 1 giocatore fuori fascia per ogni gioco.`);
+    }
 
+    // REGOLA 2: Controllo limite globale admin
+    if (bonusTotaliUsati > globalBonusLimit) {
+        errors.push(`❌ Limite Superato: Hai usato ${bonusTotaliUsati} bonus su ${globalBonusLimit} disponibili in totale. Rimuovi un fuori fascia.`);
+    }
+
+    // Grafica del box di validazione
+    let html = `<div style="padding: 15px; border-radius: 5px; border: 2px solid ${errors.length > 0 ? '#d32f2f' : '#2e7d32'}; background: ${errors.length > 0 ? '#ffebee' : '#e8f5e9'};">`;
+    
+    if (errors.length > 0) {
+        html += `<p style="font-weight: bold; color: #d32f2f; margin-bottom: 10px;">Requisiti non soddisfatti:</p>`;
+        html += `<ul style="margin: 0; padding-left: 20px; color: #d32f2f;">${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
+    } else {
+        html += `<p style="font-weight: bold; color: #2e7d32; margin-bottom: 10px;">✅ Formazione Valida</p>`;
+        html += `<p style="color: #2e7d32; font-size: 0.9em;">Bonus usati in questo gioco: ${outOfRangeInQuestoGioco}/1</p>`;
+        html += `<p style="color: #2e7d32; font-size: 0.9em;">Bonus totali rione: ${bonusTotaliUsati}/${globalBonusLimit}</p>`;
+    }
+
+    if (warnings.length > 0 && errors.length === 0) {
+        html += `<div style="margin-top: 10px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 3px; color: #e65100; font-size: 0.85em;">
+            <strong>Nota:</strong> Hai schierato 1 giocatore fuori fascia.
+        </div>`;
+    }
+
+    html += `</div>`;
     validationContainer.innerHTML = html;
 }
 
