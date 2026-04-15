@@ -719,6 +719,93 @@ async function saveConfig() {
     await loadData();
 }
 
+function loadFormazioniGiochiAdmin() {
+    const container = document.getElementById('formazioni-giochi-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const giochi = window.appState.giochi || [];
+    const squadre = window.appState.squadre || [];
+    const rioni = window.appState.rioni || [];
+
+    if (giochi.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999;">Nessun gioco registrato.</p>';
+        return;
+    }
+
+    // Iteriamo per ogni gioco
+    giochi.forEach(gioco => {
+        const giocoDiv = document.createElement('div');
+        giocoDiv.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px solid #8b6538;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        `;
+
+        let html = `<h3 style="color: #2c1810; margin-bottom: 15px; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">🏆 ${gioco.name}</h3>`;
+        html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">`;
+
+        // Per questo gioco, iteriamo su tutti i rioni
+        rioni.forEach(rione => {
+            // Cerchiamo la squadra di questo rione per questo gioco
+            const squadraRione = squadre.find(s => s.game_id === gioco.id && s.rione_id === rione.id);
+
+            html += `
+                <div style="background: #fffdf8; padding: 15px; border-radius: 6px; border-left: 5px solid ${rione.colore || '#8b6538'}; border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                    <h4 style="color: ${rione.colore || '#2c1810'}; margin-bottom: 10px; font-family: 'Cinzel', serif;">${rione.nome}</h4>
+            `;
+
+            if (squadraRione && squadraRione.players && squadraRione.players.length > 0) {
+                // Se la squadra esiste e ha giocatori, li elenchiamo in ordine di posizione
+                const giocatoriOrdinati = [...squadraRione.players].sort((a, b) => a.position - b.position);
+                
+                html += `<ul style="list-style-type: none; padding: 0; margin: 0;">`;
+                
+                giocatoriOrdinati.forEach(giocatore => {
+                    const errorBadge = giocatore.out_of_range ? `<span style="background: #ffebee; color: #d32f2f; font-size: 0.8em; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">⚠ Età</span>` : '';
+                    
+                    html += `
+                        <li style="padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-weight: bold; color: #5d4037; display: inline-block; width: 20px;">${giocatore.position}.</span> 
+                                <span style="color: #2c1810;">${giocatore.player_name}</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.85em; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">${giocatore.age} anni (${giocatore.gender})</span>
+                                ${errorBadge}
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                html += `</ul>`;
+
+                // Aggiungiamo un riepilogo rapido per l'admin se mancano giocatori
+                const requiredPlayers = gioco.total_players || 5;
+                if (squadraRione.players.length < requiredPlayers) {
+                    html += `<p style="color: #d32f2f; font-size: 0.85em; margin-top: 10px; font-weight: bold;">⚠ Mancano ${requiredPlayers - squadraRione.players.length} giocatori</p>`;
+                } else {
+                    html += `<p style="color: #2e7d32; font-size: 0.85em; margin-top: 10px; font-weight: bold;">✓ Formazione completa</p>`;
+                }
+
+            } else {
+                // Se il rione non ha ancora inserito la squadra
+                html += `<p style="color: #999; font-style: italic; margin: 0; padding: 10px 0;">Nessuna formazione inserita</p>`;
+            }
+
+            html += `</div>`; // Chiude il div del singolo rione
+        });
+
+        html += `</div>`; // Chiude la griglia dei rioni
+        giocoDiv.innerHTML = html;
+        container.appendChild(giocoDiv);
+    });
+}
+
 window.showMessage = showMessage;
 window.changeAdminCredentials = changeAdminCredentials;
 window.loadRioniCredentials = loadRioniCredentials;
