@@ -10,7 +10,6 @@ function showMessage(text, isError = false) {
 async function changeAdminCredentials() {
     const username = document.getElementById('admin-new-username').value;
     const password = document.getElementById('admin-new-password').value;
-
     if (!username || !password) {
         showMessage('Inserisci username e password', true);
         return;
@@ -31,7 +30,6 @@ function loadRioniCredentials() {
     if (!container) return;
 
     container.innerHTML = '';
-
     window.appState.rioni.forEach(rione => {
         const item = document.createElement('div');
         item.className = 'list-item';
@@ -92,7 +90,6 @@ async function uploadFile(file, bucket) {
             },
             body: formData,
         });
-
         const data = await response.json();
 
         if (!response.ok || data.error) {
@@ -118,11 +115,9 @@ async function sendChatMessage() {
 
     let fileUrl = null;
     let fileName = null;
-
     if (file) {
         showMessage('Caricamento file in corso...');
         const uploadResult = await uploadFile(file, 'chat-files');
-
         if (!uploadResult.success) {
             showMessage('Errore caricamento file: ' + uploadResult.error, true);
             return;
@@ -155,7 +150,6 @@ async function forceDataRefresh() {
     loadRioniCredentials();
     loadFasceList();
     loadChatMessages();
-
     showMessage('Dati aggiornati con successo');
 }
 
@@ -164,7 +158,6 @@ function loadChatMessages() {
     if (!container) return;
 
     container.innerHTML = '';
-
     const messages = window.appState.messaggi || [];
 
     if (messages.length === 0) {
@@ -255,7 +248,6 @@ function loadFasceList() {
     if (!container) return;
 
     container.innerHTML = '';
-
     const fasce = window.appState.fasce_eta || [];
 
     fasce.forEach(fascia => {
@@ -276,7 +268,6 @@ function loadFasceList() {
 
 async function deleteFasciaEtaUI(id) {
     if (!confirm('Sei sicuro di voler eliminare questa fascia di età?')) return;
-
     const result = await deleteFasciaEta(id);
     if (result.success) {
         showMessage('Fascia età eliminata con successo');
@@ -293,7 +284,6 @@ function loadAthleteStats() {
     if (!container) return;
 
     container.innerHTML = '';
-
     Object.keys(stats).forEach(rioneName => {
         const rioneDiv = document.createElement('div');
         rioneDiv.style.cssText = `
@@ -348,7 +338,6 @@ function loadGiochiList() {
     container.innerHTML = '';
 
     const giochi = window.appState.giochi || [];
-
     giochi.forEach(gioco => {
         const item = document.createElement('div');
         item.className = 'list-item';
@@ -383,7 +372,6 @@ function loadGiochiList() {
 function editGame(gameId) {
     const gioco = window.appState.giochi.find(g => g.id === gameId);
     if (!gioco) return;
-
     const nome = prompt('Nome gioco:', gioco.name);
     if (nome === null) return;
 
@@ -394,7 +382,6 @@ function editGame(gameId) {
     const liveUrl = prompt('URL Live Stream:', gioco.live_stream_url || '');
     const bracketUrl = prompt('URL Tabellone:', gioco.bracket_image_url || '');
     const minDonne = prompt('Numero minimo donne (lascia vuoto per calcolo automatico):', gioco.mandatory_women !== null ? gioco.mandatory_women : '');
-
     const updates = {
         nome: nome || gioco.name,
         luogo: luogo || gioco.location,
@@ -405,7 +392,6 @@ function editGame(gameId) {
         bracket_image_url: bracketUrl || null,
         mandatory_women: minDonne ? parseInt(minDonne) : null
     };
-
     updateGame(gameId, updates).then(result => {
         if (result.success) {
             showMessage('Gioco aggiornato con successo');
@@ -449,11 +435,9 @@ async function addRione() {
         colore: colore || '#000000',
         punteggio: 0
     };
-
     const { data, error } = await window.supabaseClient
         .from('rioni')
         .insert(rioneData);
-
     if (error) {
         showMessage('Errore creazione rione: ' + error.message, true);
         return;
@@ -465,7 +449,6 @@ async function addRione() {
     document.getElementById('rione-username').value = '';
     document.getElementById('rione-password').value = '';
     document.getElementById('rione-color').value = '#FF5722';
-
     await loadData();
     loadRioniList();
 }
@@ -481,11 +464,10 @@ async function addGioco() {
     const liveUrl = document.getElementById('gioco-live-url').value;
     const whatsappLink = document.getElementById('gioco-whatsapp').value;
     const totalPlayers = parseInt(document.getElementById('gioco-total-players').value) || 1;
-    const bonusPerPlayer = parseInt(document.getElementById('gioco-bonus-per-player').value) || 0;
     const mandatoryWomenInput = document.getElementById('gioco-mandatory-women').value;
     const mandatoryWomen = mandatoryWomenInput ? parseInt(mandatoryWomenInput) : null;
     const bracketFile = document.getElementById('gioco-bracket-file').files[0];
-
+    
     if (!nome) {
         showMessage('Inserisci il nome del gioco', true);
         return;
@@ -507,7 +489,7 @@ async function addGioco() {
             position: i,
             min_age: minAge,
             max_age: maxAge,
-            fascia_nome: fasciaNome, // Salviamo anche il nome della fascia
+            fascia_nome: fasciaNome,
             required_gender: requiredGender === 'any' ? null : requiredGender
         });
     }
@@ -538,18 +520,18 @@ async function addGioco() {
         whatsapp_link: whatsappLink || null,
         bracket_image_url: bracketUrl,
         total_players: totalPlayers,
-        bonus_per_player: bonusPerPlayer,
+        bonus_per_player: 0, // Impostato a 0 di default per via del limite globale
         mandatory_women: mandatoryWomen,
         player_positions: playerPositions,
         slots: [],
         restricted_rioni: [],
         in_progress: false
     };
-
+    
     const { data: insertedData, error } = await window.supabaseClient
         .from('giochi')
         .insert(gameData);
-
+        
     if (error) {
         showMessage('Errore creazione gioco: ' + error.message, true);
         return;
@@ -565,9 +547,10 @@ async function addGioco() {
     document.getElementById('gioco-desc-tecnica').value = '';
     document.getElementById('gioco-desc-spettatori').value = '';
     document.getElementById('gioco-live-url').value = '';
+    if(document.getElementById('gioco-whatsapp')) document.getElementById('gioco-whatsapp').value = '';
     document.getElementById('gioco-bracket-file').value = '';
     document.getElementById('gioco-total-players').value = '5';
-    document.getElementById('gioco-bonus-per-player').value = '0';
+    document.getElementById('gioco-mandatory-women').value = '';
     document.getElementById('positions-config').innerHTML = '';
 
     await loadData();
@@ -579,7 +562,6 @@ function updatePositionsConfig() {
     const container = document.getElementById('positions-config');
 
     if (!container || totalPlayers === 0) return;
-
     // 1. Recuperiamo le fasce d'età disponibili dal database/stato
     const fasce = window.appState.fasce_eta || [];
     const fasceOptions = fasce.map(f => 
@@ -587,7 +569,7 @@ function updatePositionsConfig() {
             ${f.nome} (${f.min_eta}-${f.max_eta} anni)
         </option>`
     ).join('');
-
+    
     // 2. Creiamo l'interfaccia
     let html = '<div style="margin-top: 20px;">';
     for (let i = 1; i <= totalPlayers; i++) {
@@ -595,7 +577,6 @@ function updatePositionsConfig() {
             <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 2px solid #8b6538;">
                 <h5 style="margin-bottom: 15px; color: #5d4037; font-size: 1.1em;">Posizione ${i}</h5>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9em; text-transform: uppercase;">Fascia Età</label>
                         <select id="pos-${i}-fascia" style="width: 100%; padding: 10px; border: 1px solid #8b6538; border-radius: 4px; background: #fffdf8; color: #2c1810; font-family: 'Playfair Display', serif;">
@@ -612,7 +593,6 @@ function updatePositionsConfig() {
                             <option value="F">Femmina</option>
                         </select>
                     </div>
-
                 </div>
             </div>
         `;
@@ -649,7 +629,6 @@ function loadHighlightsList() {
     if (!container) return;
 
     container.innerHTML = '';
-
     window.appState.momenti_salienti.forEach(highlight => {
         const item = document.createElement('div');
         item.className = 'list-item';
@@ -694,7 +673,6 @@ async function saveConfig() {
     const youtube = document.getElementById('config-youtube').value;
     const whatsapp = document.getElementById('config-whatsapp').value;
     const discord = document.getElementById('config-discord').value;
-
     const updates = [
         { key: 'bonus_limit', value: bonusLimit },
         { key: 'instagram_link', value: instagram },
@@ -703,12 +681,10 @@ async function saveConfig() {
         { key: 'whatsapp_link', value: whatsapp },
         { key: 'discord_link', value: discord }
     ];
-
     for (const update of updates) {
         const { error } = await window.supabaseClient
             .from('impostazioni')
             .upsert(update);
-
         if (error) {
             showMessage('Errore salvataggio configurazioni: ' + error.message, true);
             return;
@@ -724,11 +700,9 @@ function loadFormazioniGiochiAdmin() {
     if (!container) return;
 
     container.innerHTML = '';
-
     const giochi = window.appState.giochi || [];
     const squadre = window.appState.squadre || [];
     const rioni = window.appState.rioni || [];
-
     if (giochi.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #999;">Nessun gioco registrato.</p>';
         return;
@@ -751,7 +725,6 @@ function loadFormazioniGiochiAdmin() {
 
         // Per questo gioco, iteriamo su tutti i rioni
         rioni.forEach(rione => {
-            // Cerchiamo la squadra di questo rione per questo gioco
             const squadraRione = squadre.find(s => s.game_id === gioco.id && s.rione_id === rione.id);
 
             html += `
@@ -760,7 +733,6 @@ function loadFormazioniGiochiAdmin() {
             `;
 
             if (squadraRione && squadraRione.players && squadraRione.players.length > 0) {
-                // Se la squadra esiste e ha giocatori, li elenchiamo in ordine di posizione
                 const giocatoriOrdinati = [...squadraRione.players].sort((a, b) => a.position - b.position);
                 
                 html += `<ul style="list-style-type: none; padding: 0; margin: 0;">`;
@@ -777,14 +749,13 @@ function loadFormazioniGiochiAdmin() {
                             <div>
                                 <span style="font-size: 0.85em; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">${giocatore.age} anni (${giocatore.gender})</span>
                                 ${errorBadge}
-                            </div>
+                             </div>
                         </li>
                     `;
                 });
                 
                 html += `</ul>`;
 
-                // Aggiungiamo un riepilogo rapido per l'admin se mancano giocatori
                 const requiredPlayers = gioco.total_players || 5;
                 if (squadraRione.players.length < requiredPlayers) {
                     html += `<p style="color: #d32f2f; font-size: 0.85em; margin-top: 10px; font-weight: bold;">⚠ Mancano ${requiredPlayers - squadraRione.players.length} giocatori</p>`;
@@ -793,14 +764,13 @@ function loadFormazioniGiochiAdmin() {
                 }
 
             } else {
-                // Se il rione non ha ancora inserito la squadra
                 html += `<p style="color: #999; font-style: italic; margin: 0; padding: 10px 0;">Nessuna formazione inserita</p>`;
             }
 
-            html += `</div>`; // Chiude il div del singolo rione
+            html += `</div>`;
         });
 
-        html += `</div>`; // Chiude la griglia dei rioni
+        html += `</div>`;
         giocoDiv.innerHTML = html;
         container.appendChild(giocoDiv);
     });
