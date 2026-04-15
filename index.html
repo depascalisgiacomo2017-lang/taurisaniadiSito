@@ -325,17 +325,17 @@
 
     <div id="admin-login-modal" class="modal-overlay">
         <h3>Login Amministratore</h3>
-        <input type="text" id="admin-user" placeholder="Nome Utente">
+        <input type="email" id="admin-email" placeholder="Email">
         <input type="password" id="admin-pass" placeholder="Password">
-        <div id="login-error" class="error-msg">Credenziali non valide!</div>
+        <div id="login-error" class="error-msg"></div>
         <button class="btn-login" onclick="attemptAdminLogin()">Accedi</button>
     </div>
 
     <div id="caporione-login-modal" class="modal-overlay">
         <h3>Accesso Capo-Rione</h3>
-        <input type="text" id="caporione-user" placeholder="Nome Utente">
+        <input type="email" id="caporione-email" placeholder="Email">
         <input type="password" id="caporione-pass" placeholder="Password">
-        <div id="login-error-capo" class="error-msg">Credenziali non valide!</div>
+        <div id="login-error-capo" class="error-msg"></div>
         <button class="btn-login" onclick="attemptCaporioneLogin()">Accedi Area Rione</button>
     </div>
 </div>
@@ -358,30 +358,50 @@
     }
 
     async function attemptAdminLogin() {
-        const username = document.getElementById('admin-user').value;
+        const email = document.getElementById('admin-email').value;
         const password = document.getElementById('admin-pass').value;
+        const errorMsg = document.getElementById('login-error');
 
-        const result = await loginAdmin(username, password);
+        if (!email || !password) {
+            errorMsg.textContent = 'Completa tutti i campi';
+            errorMsg.style.display = 'block';
+            return;
+        }
 
-        if (result.success) {
+        const result = await window.signInWithEmail(email, password);
+
+        if (result.success && result.role === 'admin') {
             window.location.href = 'admin_panel.html';
         } else {
-            document.getElementById('login-error').style.display = 'block';
+            errorMsg.textContent = result.error || 'Credenziali non valide o accesso non autorizzato';
+            errorMsg.style.display = 'block';
         }
     }
 
     async function attemptCaporioneLogin() {
-        const username = document.getElementById('caporione-user').value;
+        const email = document.getElementById('caporione-email').value;
         const password = document.getElementById('caporione-pass').value;
+        const errorMsg = document.getElementById('login-error-capo');
 
-        const result = await loginCaporione(username, password);
+        if (!email || !password) {
+            errorMsg.textContent = 'Completa tutti i campi';
+            errorMsg.style.display = 'block';
+            return;
+        }
 
-        if (result.success) {
+        const result = await window.signInWithEmail(email, password);
+
+        if (result.success && result.role === 'caporione') {
             window.location.href = 'caporione.html';
         } else {
-            document.getElementById('login-error-capo').style.display = 'block';
+            errorMsg.textContent = result.error || 'Credenziali non valide o accesso non autorizzato';
+            errorMsg.style.display = 'block';
         }
     }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        await window.initializeAuth?.();
+    });
 </script>
 
 </body>

@@ -1,30 +1,47 @@
 async function updateAdminCredentials(newUsername, newPassword) {
-    const { data, error } = await supabaseClient
-        .from('admin_credentials')
-        .update({ username: newUsername, password: newPassword, updated_at: new Date().toISOString() })
-        .eq('username', localStorage.getItem('username'));
-
-    if (error) {
-        console.error('Error updating credentials:', error);
-        return { success: false, error };
+    const user = window.getCurrentUser?.();
+    if (!user) {
+        return { success: false, error: 'Utente non autenticato' };
     }
 
-    localStorage.setItem('username', newUsername);
-    return { success: true };
+    try {
+        const passwordUpdateResult = await window.updateUserPassword?.(newPassword);
+        if (!passwordUpdateResult?.success) {
+            return { success: false, error: 'Errore aggiornamento password' };
+        }
+
+        const { error } = await window.supabaseClient
+            .from('admin_credentials')
+            .update({ username: newUsername, updated_at: new Date().toISOString() })
+            .eq('user_id', user.id);
+
+        if (error) {
+            console.error('Error updating admin credentials:', error);
+            return { success: false, error };
+        }
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
 }
 
 async function updateRioneCredentials(rioneId, newUsername, newPassword) {
-    const { data, error } = await supabaseClient
-        .from('rioni')
-        .update({ username: newUsername, password: newPassword })
-        .eq('id', rioneId);
+    try {
+        const { error } = await window.supabaseClient
+            .from('rioni')
+            .update({ username: newUsername })
+            .eq('id', rioneId);
 
-    if (error) {
-        console.error('Error updating rione credentials:', error);
-        return { success: false, error };
+        if (error) {
+            console.error('Error updating rione credentials:', error);
+            return { success: false, error };
+        }
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
     }
-
-    return { success: true };
 }
 
 async function sendMessageToRione(text, fileUrl = null, fileName = null) {
