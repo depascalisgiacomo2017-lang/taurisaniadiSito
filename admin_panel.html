@@ -554,22 +554,33 @@
         loadFasceList();
     });
 
-   function showSection(sectionName) {
+  function showSection(sectionName) {
+        // 1. Cerca la scatola HTML da aprire
+        const sectionElement = document.getElementById(sectionName);
+        
+        // 2. Sistema "Anti-Crash": se non trova la scatola HTML, ti avvisa e si ferma!
+        if (!sectionElement) {
+            showMessage('Attenzione: Manca il blocco HTML per "' + sectionName + '"', 'error');
+            return;
+        }
+
+        // 3. Nasconde tutte le sezioni e "spegne" i bottoni
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-        document.getElementById(sectionName).classList.add('active');
-        event.target.classList.add('active');
+        // 4. Mostra la sezione cliccata e "accende" il bottone
+        sectionElement.classList.add('active');
+        if (window.event && window.event.target) {
+            window.event.target.classList.add('active');
+        }
 
-        // Caricamento dinamico dei dati in base alla sezione
+        // 5. Carica i dati specifici
         if (sectionName === 'chat') loadChatMessages();
         if (sectionName === 'credenziali') loadRioniCredentials();
         if (sectionName === 'fasce-eta') loadFasceList();
         if (sectionName === 'highlights') loadMomentiSalienti();
         if (sectionName === 'classifica') loadClassifica();
         if (sectionName === 'giochi') loadGiochiList();
-        
-        // Le due nuove sezioni che abbiamo aggiunto
         if (sectionName === 'formazioni') loadAthleteStats(); 
         if (sectionName === 'formazioni-giochi') loadFormazioniGiochiAdmin();
     }
