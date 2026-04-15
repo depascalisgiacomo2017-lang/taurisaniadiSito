@@ -493,14 +493,21 @@ async function addGioco() {
 
     const playerPositions = [];
     for (let i = 1; i <= totalPlayers; i++) {
-        const minAge = parseInt(document.getElementById(`pos-${i}-min-age`)?.value) || 0;
-        const maxAge = parseInt(document.getElementById(`pos-${i}-max-age`)?.value) || 99;
+        const fasciaSelect = document.getElementById(`pos-${i}-fascia`);
+        const selectedOption = fasciaSelect ? fasciaSelect.options[fasciaSelect.selectedIndex] : null;
+        
+        // Estraiamo i dati dai data-attributes dell'opzione selezionata
+        const minAge = selectedOption && fasciaSelect.value ? parseInt(selectedOption.dataset.min) : 0;
+        const maxAge = selectedOption && fasciaSelect.value ? parseInt(selectedOption.dataset.max) : 99;
+        const fasciaNome = selectedOption && fasciaSelect.value ? selectedOption.dataset.nome : 'Libera';
+
         const requiredGender = document.getElementById(`pos-${i}-gender`)?.value || null;
 
         playerPositions.push({
             position: i,
             min_age: minAge,
             max_age: maxAge,
+            fascia_nome: fasciaNome, // Salviamo anche il nome della fascia
             required_gender: requiredGender === 'any' ? null : requiredGender
         });
     }
@@ -573,28 +580,31 @@ function updatePositionsConfig() {
 
     if (!container || totalPlayers === 0) return;
 
+    // Recuperiamo le fasce d'età disponibili dallo stato dell'app
+    const fasce = window.appState.fasce_eta || [];
+    const fasceOptions = fasce.map(f => 
+        `<option value="${f.id}" data-min="${f.min_eta}" data-max="${f.max_eta}" data-nome="${f.nome}">
+            ${f.nome} (${f.min_eta}-${f.max_eta} anni)
+        </option>`
+    ).join('');
+
     let html = '<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">';
     html += '<h4 style="margin-bottom: 15px; color: #2c1810;">Configurazione Posizioni</h4>';
-
     for (let i = 1; i <= totalPlayers; i++) {
         html += `
             <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 2px solid #8b6538;">
                 <h5 style="margin-bottom: 10px; color: #5d4037;">Posizione ${i}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Min</label>
-                        <input type="number" id="pos-${i}-min-age" value="0" min="0"
-                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Età Max</label>
-                        <input type="number" id="pos-${i}-max-age" value="99" min="0"
-                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Fascia Età</label>
+                        <select id="pos-${i}-fascia" style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                            <option value="">Nessun limite</option>
+                            ${fasceOptions}
+                        </select>
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-size: 0.9em;">Sesso Richiesto</label>
-                        <select id="pos-${i}-gender"
-                            style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
+                        <select id="pos-${i}-gender" style="width: 100%; padding: 8px; border: 2px solid #8b6538; border-radius: 5px;">
                             <option value="any">Qualsiasi</option>
                             <option value="M">Maschio</option>
                             <option value="F">Femmina</option>
