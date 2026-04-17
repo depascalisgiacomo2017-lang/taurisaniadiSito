@@ -325,7 +325,7 @@
 
     <div id="admin-login-modal" class="modal-overlay">
         <h3>Login Amministratore</h3>
-        <input type="email" id="admin-email" placeholder="Email">
+        <input type="text" id="admin-user" placeholder="Username">
         <input type="password" id="admin-pass" placeholder="Password">
         <div id="login-error" class="error-msg"></div>
         <button class="btn-login" onclick="attemptAdminLogin()">Accedi</button>
@@ -333,7 +333,7 @@
 
     <div id="caporione-login-modal" class="modal-overlay">
         <h3>Accesso Capo-Rione</h3>
-        <input type="email" id="caporione-email" placeholder="Email">
+        <input type="text" id="caporione-user" placeholder="Username Rione">
         <input type="password" id="caporione-pass" placeholder="Password">
         <div id="login-error-capo" class="error-msg"></div>
         <button class="btn-login" onclick="attemptCaporioneLogin()">Accedi Area Rione</button>
@@ -344,6 +344,7 @@
 <script type="module" src="/supabase_client.js"></script>
 <script type="module" src="/date_utils.js"></script>
 <script type="module" src="/auth.js"></script>
+
 <script>
     function showAdminLogin() {
         const modal = document.getElementById('admin-login-modal');
@@ -357,51 +358,62 @@
         document.getElementById('admin-login-modal').style.display = 'none';
     }
 
+    // Funzione Asincrona per aspettare il database
     async function attemptAdminLogin() {
-        const email = document.getElementById('admin-email').value;
+        const username = document.getElementById('admin-user').value;
         const password = document.getElementById('admin-pass').value;
         const errorMsg = document.getElementById('login-error');
+        const btn = event.target;
 
-        if (!email || !password) {
+        if (!username || !password) {
             errorMsg.textContent = 'Completa tutti i campi';
             errorMsg.style.display = 'block';
             return;
         }
 
-        const result = await window.signInWithEmail(email, password);
+        // Effetto grafico di caricamento
+        btn.textContent = 'Accesso in corso...';
+        btn.disabled = true;
+
+        const result = await window.login(username, password);
 
         if (result.success && result.role === 'admin') {
             window.location.href = 'admin_panel.html';
         } else {
-            errorMsg.textContent = result.error || 'Credenziali non valide o accesso non autorizzato';
+            errorMsg.textContent = result.error || 'Credenziali non valide';
             errorMsg.style.display = 'block';
+            btn.textContent = 'Accedi';
+            btn.disabled = false;
         }
     }
 
+    // Funzione Asincrona per aspettare il database
     async function attemptCaporioneLogin() {
-        const email = document.getElementById('caporione-email').value;
+        const username = document.getElementById('caporione-user').value;
         const password = document.getElementById('caporione-pass').value;
         const errorMsg = document.getElementById('login-error-capo');
+        const btn = event.target;
 
-        if (!email || !password) {
+        if (!username || !password) {
             errorMsg.textContent = 'Completa tutti i campi';
             errorMsg.style.display = 'block';
             return;
         }
 
-        const result = await window.signInWithEmail(email, password);
+        btn.textContent = 'Accesso in corso...';
+        btn.disabled = true;
+
+        const result = await window.login(username, password);
 
         if (result.success && result.role === 'caporione') {
             window.location.href = 'caporione.html';
         } else {
-            errorMsg.textContent = result.error || 'Credenziali non valide o accesso non autorizzato';
+            errorMsg.textContent = result.error || 'Credenziali non valide';
             errorMsg.style.display = 'block';
+            btn.textContent = 'Accedi Area Rione';
+            btn.disabled = false;
         }
     }
-
-    window.addEventListener('DOMContentLoaded', async () => {
-        await window.initializeAuth?.();
-    });
 </script>
 
 </body>
