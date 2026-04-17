@@ -42,9 +42,14 @@ async function login(username, password) {
 }
 
 function logout() {
+    // 1. Cancella i dati dalla memoria
     localStorage.removeItem('userRole');
     localStorage.removeItem('rioneId');
     localStorage.removeItem('username');
+    
+    // 2. LA RIGA MAGICA: Riporta l'utente alla pagina di login!
+    window.location.href = 'index.html';
+    
     return { success: true };
 }
 
