@@ -1,68 +1,51 @@
 async function login(username, password) {
     if (!window.supabaseClient) {
-        return { success: false, error: 'Errore di connessione al database' };
+        return { success: false, error: 'Errore database' };
     }
 
     try {
-        // 1. Controlla se è l'Amministratore
-        const { data: adminData, error: adminError } = await window.supabaseClient
-            .from('admin_credentials')
-            .select('*')
-            .eq('username', username)
-            .eq('password', password)
-            .single();
+        // IL TRUCCO: Aggiunge in automatico @taurisaniadi.it all'username per usare l'Auth ufficiale
+        let loginEmail = username === 'admin' ? 'admin@taurisaniadi.it' : `${username.toLowerCase()}@taurisaniadi.it`;
 
-        if (adminData) {
-            localStorage.setItem('userRole', 'admin');
-            localStorage.setItem('username', username);
-            return { success: true, role: 'admin' };
+        // Login ufficiale tramite Supabase Auth
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: loginEmail,
+            password: password,
+        });
+
+        if (error) {
+            return { success: false, error: 'Credenziali non valide' };
         }
 
-        // 2. Controlla se è un Capo-Rione
-        const { data: rioneData, error: rioneError } = await window.supabaseClient
-            .from('rioni')
-            .select('*')
-            .eq('username', username)
-            .eq('password', password)
-            .single();
+        // Se ha successo, salviamo il ruolo in memoria
+        const role = username === 'admin' ? 'admin' : 'caporione';
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('username', username);
+        if (role === 'caporione') localStorage.setItem('rioneId', username);
 
-        if (rioneData) {
-            localStorage.setItem('userRole', 'caporione');
-            localStorage.setItem('rioneId', rioneData.id); // Salva l'ID reale (UUID) dal database!
-            localStorage.setItem('username', username);
-            return { success: true, role: 'caporione', rioneId: rioneData.id };
-        }
+        return { success: true, role: role };
 
-        // Se non trova nessuno dei due
-        return { success: false, error: 'Credenziali non valide' };
     } catch (error) {
-        console.error('Errore durante il login:', error);
+        console.error('Errore login:', error);
         return { success: false, error: 'Errore di sistema' };
     }
 }
 
-function logout() {
-
+async function logout() {
     localStorage.removeItem('userRole');
     localStorage.removeItem('rioneId');
     localStorage.removeItem('username');
     
+    // Usciamo da Supabase Auth e torniamo alla home
+    if (window.supabaseClient) await window.supabaseClient.auth.signOut();
     window.location.href = 'index.html';
     
     return { success: true };
 }
 
-function getCurrentRole() {
-    return localStorage.getItem('userRole');
-}
-
-function getCurrentRioneId() {
-    return localStorage.getItem('rioneId');
-}
-
-function isAuthenticated() {
-    return !!localStorage.getItem('userRole');
-}
+function getCurrentRole() { return localStorage.getItem('userRole'); }
+function getCurrentRioneId() { return localStorage.getItem('rioneId'); }
+function isAuthenticated() { return !!localStorage.getItem('userRole'); }
 
 window.login = login;
 window.logout = logout;
