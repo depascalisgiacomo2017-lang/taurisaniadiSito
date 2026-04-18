@@ -1,3 +1,52 @@
+async function login(username, password) {
+    if (!window.supabaseClient) {
+        return { success: false, error: 'Errore database' };
+    }
+
+    try {
+        // IL TRUCCO: Aggiunge in automatico @taurisaniadi.it all'username
+        let loginEmail = username === 'admin' ? 'admin@taurisaniadi.it' : `${username.toLowerCase()}@taurisaniadi.it`;
+
+        // Login ufficiale tramite Supabase Auth
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: loginEmail,
+            password: password,
+        });
+
+        if (error) {
+            return { success: false, error: 'Credenziali non valide' };
+        }
+
+        // Se ha successo, salviamo il ruolo in memoria
+        const role = username === 'admin' ? 'admin' : 'caporione';
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('username', username);
+        if (role === 'caporione') localStorage.setItem('rioneId', username);
+
+        return { success: true, role: role };
+
+    } catch (error) {
+        console.error('Errore login:', error);
+        return { success: false, error: 'Errore di sistema' };
+    }
+}
+
+async function logout() {
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('rioneId');
+    localStorage.removeItem('username');
+    
+    // Usciamo da Supabase e torniamo alla home
+    if (window.supabaseClient) await window.supabaseClient.auth.signOut();
+    window.location.href = 'index.html';
+    
+    return { success: true };
+}
+
+function getCurrentRole() { return localStorage.getItem('userRole'); }
+function getCurrentRioneId() { return localStorage.getItem('rioneId'); }
+function isAuthenticated() { return !!localStorage.getItem('userRole'); }
+
 function showMessage(text, isError = false) {
     const msg = document.getElementById('message');
     msg.textContent = text;
@@ -520,7 +569,7 @@ async function addGioco() {
         whatsapp_link: whatsappLink || null,
         bracket_image_url: bracketUrl,
         total_players: totalPlayers,
-        bonus_per_player: 0, // Impostato a 0 di default per via del limite globale
+        bonus_per_player: 0, 
         mandatory_women: mandatoryWomen,
         player_positions: playerPositions,
         slots: [],
@@ -562,7 +611,6 @@ function updatePositionsConfig() {
     const container = document.getElementById('positions-config');
 
     if (!container || totalPlayers === 0) return;
-    // 1. Recuperiamo le fasce d'età disponibili dal database/stato
     const fasce = window.appState.fasce_eta || [];
     const fasceOptions = fasce.map(f => 
         `<option value="${f.id}" data-min="${f.min_eta}" data-max="${f.max_eta}" data-nome="${f.nome}">
@@ -570,7 +618,6 @@ function updatePositionsConfig() {
         </option>`
     ).join('');
     
-    // 2. Creiamo l'interfaccia
     let html = '<div style="margin-top: 20px;">';
     for (let i = 1; i <= totalPlayers; i++) {
         html += `
@@ -602,6 +649,9 @@ function updatePositionsConfig() {
     container.innerHTML = html;
 }
 
+// -----------------------------------------------------
+// FUNZIONI PER I RIONI (CARICAMENTO ED ELIMINAZIONE)
+// -----------------------------------------------------
 function loadRioniList() {
     const container = document.getElementById('rioni-list');
     if (!container) return;
@@ -619,10 +669,37 @@ function loadRioniList() {
                     Username: ${rione.username}
                 </p>
             </div>
+            <button class="btn btn-danger" onclick="deleteRioneUI('${rione.id}')" style="margin-top: 0; padding: 8px 15px;">Elimina</button>
         `;
         container.appendChild(item);
     });
 }
+
+async function deleteRioneUI(rioneId) {
+    if (!confirm('Sei sicuro di voler eliminare questo Rione? Questa azione è irreversibile e cancellerà la sua associazione dal sito.')) {
+        return;
+    }
+
+    const { error } = await window.supabaseClient
+        .from('rioni')
+        .delete()
+        .eq('id', rioneId);
+
+    if (error) {
+        showMessage('Errore eliminazione rione: ' + error.message, true);
+        return;
+    }
+
+    showMessage('Rione eliminato con successo');
+    await loadData(); // Ricarica lo stato
+    loadRioniList();  // Ricarica la lista visiva
+    
+    // Se la tendina delle credenziali è aperta, ricaricala per evitare di mostrare un rione inesistente
+    if (document.getElementById('rioni-credentials-list')) {
+        loadRioniCredentials();
+    }
+}
+// -----------------------------------------------------
 
 function loadHighlightsList() {
     const container = document.getElementById('highlights-list');
@@ -708,7 +785,6 @@ function loadFormazioniGiochiAdmin() {
         return;
     }
 
-    // Iteriamo per ogni gioco
     giochi.forEach(gioco => {
         const giocoDiv = document.createElement('div');
         giocoDiv.style.cssText = `
@@ -723,7 +799,6 @@ function loadFormazioniGiochiAdmin() {
         let html = `<h3 style="color: #2c1810; margin-bottom: 15px; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">🏆 ${gioco.name}</h3>`;
         html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">`;
 
-        // Per questo gioco, iteriamo su tutti i rioni
         rioni.forEach(rione => {
             const squadraRione = squadre.find(s => s.game_id === gioco.id && s.rione_id === rione.id);
 
@@ -776,6 +851,13 @@ function loadFormazioniGiochiAdmin() {
     });
 }
 
+// Esportazioni Globali
+window.login = login;
+window.logout = logout;
+window.getCurrentRole = getCurrentRole;
+window.getCurrentRioneId = getCurrentRioneId;
+window.isAuthenticated = isAuthenticated;
+
 window.showMessage = showMessage;
 window.changeAdminCredentials = changeAdminCredentials;
 window.loadRioniCredentials = loadRioniCredentials;
@@ -796,6 +878,7 @@ window.addRione = addRione;
 window.addGioco = addGioco;
 window.updatePositionsConfig = updatePositionsConfig;
 window.loadRioniList = loadRioniList;
+window.deleteRioneUI = deleteRioneUI; // <-- Nuova Funzione Esportata
 window.loadHighlightsList = loadHighlightsList;
 window.loadConfigForm = loadConfigForm;
 window.saveConfig = saveConfig;
